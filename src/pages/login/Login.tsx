@@ -1,44 +1,295 @@
-import React, { useState } from 'react';
+/** @jsxImportSource @emotion/react */
+import React, { use, useEffect, useState } from 'react';
 import { css } from '@emotion/react';
-import api from '../../api/axiosConfig';
+import api from '../../config_api/axiosConfig';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { Alert } from '../../components/Alert';
+
+type Formik = {
+    login_name: string,
+    password: string,
+    name: string,
+    tel: string,
+    address: string,
+    email: string,
+    is_admin: string
+}
+
+type RegisterAndLoginFormType = {
+    formik: any,
+    isShowPassword: boolean
+}
+
+const validationSchemaLogin = Yup.object({
+    login_name: Yup.string().required('Bạn chưa nhập tên đăng nhập'),
+    password: Yup.string().required('Bạn chưa nhập mật khẩu'),
+});
+
+const validationSchemaRegister = Yup.object({
+    login_name: Yup.string().required('Bạn chưa nhập tên đăng nhập'),
+    password: Yup.string().required('Bạn chưa nhập mật khẩu'),
+    name: Yup.string().required('Bạn chưa nhập tên đầy đủ'),
+    tel: Yup.string().required('Bạn chưa nhập số điện thoại').min(10, 'Số điện thoại tối thiểu 10 số').max(11, 'Số điện thoại tối đa 11 số'),
+    address: Yup.string().required('Bạn chưa nhập địa chỉ'),
+    email: Yup.string().required('Bạn chưa nhập địa chỉ email').email('Email không hợp lệ'),
+    is_admin: Yup.string().nullable(),
+});
 
 export const Login = () => {
-    const [name, setName] = useState('');
-    const [password, setPassword] = useState('');
-    const handleSubmit = async (name?: string, password?: string) => {
-        const a = await api.get('/sanctum/csrf-cookie')
-        await api.post('/api/login', {
-            login_name: name,
-            password: password
-        }).then((response) => {
-            console.log(response);
-            localStorage.setItem('token', response.data.token);
-        }).catch((error) => {
-            console.log(error)
-        })
-    }
+    const [formType, setFormType] = useState<'login' | 'register'>('login');
+    const [isShowPassword, setIsShowPassword] = useState(false);
+    const [statusAlert, setStatusAlert] = useState<{ message: string[] | unknown[], type: 'error' | 'success' } | null>();
+
+    const formik = useFormik<Formik>({
+        initialValues: {
+            login_name: '',
+            password: '',
+            name: '',
+            tel: '',
+            address: '',
+            email: '',
+            is_admin: '0'
+        },
+        validationSchema: formType === 'login' ? validationSchemaLogin : validationSchemaRegister,
+        onSubmit: async values => {
+            if (formType === 'login') {
+                await api.post('/login', {
+                    login_name: values.login_name,
+                    password: values.password
+                }).then((response) => {
+                    localStorage.setItem('token', response.data.token);
+                    setStatusAlert({ message: ['Đăng nhập thành công'], type: 'success' });
+
+                }).catch((error) => {
+                    setStatusAlert({ message: Object.values(error.response.data.errors).flat(), type: 'error' });
+                })
+            } else {
+                await api.post('/store', {
+                    login_name: values.login_name,
+                    name: values.password,
+                    tel: values.tel,
+                    address: values.address,
+                    email: values.email,
+                    is_admin: values.is_admin.toString(),
+                    password: values.password
+                }).then((response) => {
+                    setStatusAlert({ message: ['Đăng kí thành công'], type: 'success' });
+
+                }).catch((error) => {
+                    setStatusAlert({ message: Object.values(error.response.data.errors).flat(), type: 'error' });
+                })
+            }
+        }
+    })
+
+    useEffect(() => {
+        if (statusAlert) {
+            const timer = setTimeout(() => {
+                setStatusAlert(null);
+            }, 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [statusAlert])
+
+    useEffect(() => {
+        if (formType) {
+            formik.setValues({
+                login_name: '', password: '', name: '', tel: '', address: '', email: '', is_admin: '0'
+            })
+        }
+    }, [formType])
 
     return (
         <div css={container}>
-            <div>
-                <label htmlFor="">Tên đăng nhập</label>
-                <input type="text" placeholder='Tên đăng nhập' value={name} onChange={(e) => setName(e.target.value)} />
-            </div>
-            <div>
-                <label htmlFor="">Mật khẩu</label>
-                <input type="password" placeholder='Mật khẩu' value={password} onChange={(e) => setPassword(e.target.value)} />
-            </div>
+            {statusAlert && (
+                statusAlert.message.length > 0 && (
+                    <Alert type={statusAlert.type} message={statusAlert.message} />
+                )
+            )}
+            <div css={content}>
+                <h2>{formType === 'login' ? 'Thông tin đăng nhập' : 'Thông tin đăng kí'}</h2>
+                {formType === 'login' ? (
+                    login({ formik, isShowPassword })
+                ) : register({ formik, isShowPassword })}
 
-            <button onClick={() => handleSubmit(name, password)}>Login</button>
-            <button onClick={() => api.post('/api/logout')}>Logout</button>
+                <div>
+                    <input id='showPassword' type="checkbox" checked={isShowPassword} onChange={() => setIsShowPassword(!isShowPassword)} />
+                    <label htmlFor='showPassword'>Hiển thị mật khẩu</label>
+                </div>
+
+                <button
+                    css={submitBtn((!formik.values.login_name || !formik.values.password))}
+                    onClick={() => formik.submitForm()}
+                    disabled={(!formik.values.login_name || !formik.values.password)}
+                >
+                    {formType === 'register' ? 'Đăng ký' : 'Đăng nhập'}
+                </button>
+
+                {formType === 'login' && (
+                    <div>
+                        Bạn chưa có tài khoản? <span style={{ color: 'blue', cursor: 'pointer' }} onClick={() => setFormType('register')}>Đăng ký</span>
+                    </div>
+                )}
+                {formType === 'register' && (
+                    <div>
+                        Bạn đã có tài khoản? <span style={{ color: 'blue', cursor: 'pointer' }} onClick={() => setFormType('login')}>Đăng nhập</span>
+                    </div>
+                )}
+            </div>
         </div>
+    )
+}
+
+const login = ({ formik, isShowPassword }: RegisterAndLoginFormType) => {
+    return (
+        <>
+            <div css={field}>
+                <label htmlFor="">Tên đăng nhập</label>
+                <input
+                    css={fieldInput}
+                    type="text"
+                    placeholder='Tên đăng nhập'
+                    value={formik.values.login_name}
+                    onChange={(e) => formik.setFieldValue('login_name', e.target.value)}
+                />
+            </div>
+            <div css={field}>
+                <label htmlFor="">Mật khẩu</label>
+                <input
+                    css={fieldInput}
+                    type={isShowPassword ? "text" : "password"}
+                    placeholder='Mật khẩu' value={formik.values.password}
+                    onChange={(e) => formik.setFieldValue('password', e.target.value)}
+                />
+            </div>
+        </>
+    )
+}
+
+const register = ({ formik, isShowPassword }: RegisterAndLoginFormType) => {
+    return (
+        <>
+            <div css={field}>
+                <label htmlFor="">Tên đăng nhập</label>
+                <input
+                    css={fieldInput}
+                    type="text"
+                    placeholder='Tên đăng nhập'
+                    value={formik.values.login_name}
+                    onChange={(e) => formik.setFieldValue('login_name', e.target.value)}
+                />
+            </div>
+            <div css={field}>
+                <label htmlFor="">Tên đầy đủ</label>
+                <input
+                    css={fieldInput}
+                    type='text'
+                    placeholder='Tên đầy đủ' value={formik.values.name}
+                    onChange={(e) => formik.setFieldValue('name', e.target.value)}
+                />
+            </div>
+            <div css={field}>
+                <label htmlFor="">Số điện thoại</label>
+                <input
+                    css={fieldInput}
+                    type="tel"
+                    placeholder='Số điện thoại'
+                    pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+                    value={formik.values.tel}
+                    onChange={(e) => formik.setFieldValue('tel', e.target.value)}
+                />
+            </div>
+            <div css={field}>
+                <label htmlFor="">Địa chỉ</label>
+                <input
+                    css={fieldInput}
+                    type='text'
+                    placeholder='Địa chỉ' value={formik.values.address}
+                    onChange={(e) => formik.setFieldValue('address', e.target.value)}
+                />
+            </div>
+            <div css={field}>
+                <label htmlFor="">Email</label>
+                <input
+                    css={fieldInput}
+                    type="text"
+                    placeholder='Email'
+                    value={formik.values.email}
+                    onChange={(e) => formik.setFieldValue('email', e.target.value)}
+                />
+            </div>
+            <div css={field}>
+                <label htmlFor="">Mật khẩu</label>
+                <input
+                    css={fieldInput}
+                    type={isShowPassword ? "text" : "password"}
+                    placeholder='Mật khẩu' value={formik.values.password}
+                    onChange={(e) => formik.setFieldValue('password', e.target.value)}
+                />
+            </div>
+            <div css={field}>
+                <label htmlFor="">Quản trị viên</label>
+                <input
+                    css={fieldInput}
+                    type="checkbox"
+                    checked={formik.values.is_admin === '1'}
+                    onChange={(e) => formik.setFieldValue('is_admin', e.target.checked ? '1' : '0')}
+                />
+            </div>
+        </>
     )
 }
 
 const container = css`
     display: flex;
+    height: 100vh;
+    align-items: center;
     flex-direction: column;
-    height: 400px;
-    width: 600px;
-    border-radius: 10px;
+    justify-content: center;
+`
+
+const content = css`
+    width: 100%;
+    display: flex;
+    padding: 30px;
+    max-width: 460px;
+    border-radius: 20px;
+    flex-direction: column;
+    justify-content: center;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+`
+
+const field = css`
+    gap: 5px;
+    display: flex;
+    margin-bottom: 8px;
+    flex-direction: column;
+    label {
+        font-weight: 500;
+        font-size: 17px;
+    }
+`
+
+const submitBtn = (isDisable: boolean) => css`
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    &:hover {
+        background-color: ${isDisable ? '' : '#00adff'};
+        color: ${isDisable ? '' : 'white'};
+    }
+    transition: all .3s;
+    :disabled {
+        background-color: #ccc;
+    }
+`
+
+const fieldInput = css`
+    padding: 10px;
+    outline: none;
+    font-size: 14px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
 `
