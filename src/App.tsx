@@ -1,25 +1,31 @@
 /** @jsxImportSource @emotion/react */
 import React from 'react';
 import './App.css';
-import { Login } from './pages/loginAndRegister/LoginAndRegisterForm'
-import { Route, Routes } from 'react-router-dom';
+import { LoginOrRegister } from './pages/loginOrRegister/LoginOrRegisterForm'
+import { Route, Routes, useLocation } from 'react-router-dom';
 import { SideBar } from './components/SideBar';
 import { css } from '@emotion/react';
+import { Staff } from './pages/staff/staff';
+import { AuthThenticatedRoute } from './route/authThenticatedRoute';
 
 function App() {
   const isAuthenticated = !!localStorage.getItem('token');
+  const location = useLocation()
   return (
     <>
       <div css={flex}>
-        {isAuthenticated && (
+        {(isAuthenticated || location.state) && (
           <SideBar />
         )}
         <div css={css`
-          width: ${isAuthenticated ? 'calc(100% - 250px)' : '100%'};
+          width: ${(isAuthenticated || location.state) ? 'calc(100% - 250px)' : '100%'};
         `}>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-        </Routes>
+          <Routes>
+            <Route path="/login" element={<LoginOrRegister />} />
+            <Route element={<AuthThenticatedRoute isAuthenticated={(isAuthenticated || location.state)} />}>
+              <Route path="/staff" element={<Staff />} />
+            </Route>
+          </Routes>
         </div>
       </div>
     </>

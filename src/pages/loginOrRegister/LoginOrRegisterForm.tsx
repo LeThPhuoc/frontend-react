@@ -5,6 +5,7 @@ import api from '../../config_api/axiosConfig';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Alert } from '../../components/Alert';
+import { useNavigate } from 'react-router-dom';
 
 const listFieldRegister: {
     label: string,
@@ -56,7 +57,8 @@ const validationSchemaRegister = Yup.object({
     is_admin: Yup.string().nullable(),
 });
 
-export const Login = () => {
+export const LoginOrRegister = () => {
+    const navigate = useNavigate();
     const [formType, setFormType] = useState<'login' | 'register'>('login');
     const [isShowPassword, setIsShowPassword] = useState(false);
     const [statusAlert, setStatusAlert] = useState<{ message: string[] | unknown[], type: 'error' | 'success' } | null>();
@@ -82,8 +84,9 @@ export const Login = () => {
                     password: values.password
                 }).then((response) => {
                     localStorage.setItem('token', response.data.token);
+                    localStorage.setItem('user', response.data.user);
                     setStatusAlert({ message: ['Đăng nhập thành công'], type: 'success' });
-
+                    navigate('/', {state: response.data.token});
                 }).catch((error) => {
                     setStatusAlert({ message: Object.values(error.response.data.errors).flat(), type: 'error' });
                 })
@@ -98,13 +101,21 @@ export const Login = () => {
                     password: values.password
                 }).then((response) => {
                     setStatusAlert({ message: ['Đăng kí thành công'], type: 'success' });
+                    setFormType('login')
 
                 }).catch((error) => {
-                    setStatusAlert({ message: Object.values(error.response.data.errors).flat(), type: 'error' });
+                    console.log(error)
+                    setStatusAlert({ message: (error.response.data.errors ? Object.values(error.response.data.errors).flat() : error.response.data.message), type: 'error' });
                 })
             }
         }
     })
+
+    useEffect(() => {
+        if(localStorage.getItem('token')){
+            navigate('/')
+        }
+    }, [])
 
     useEffect(() => {
         if (statusAlert) {
@@ -121,7 +132,6 @@ export const Login = () => {
                 login_name: '', password: '', name: '', tel: '', address: '', email: '', is_admin: '0'
             })
             formik.setErrors({});
-            setStatusAlert(null);
         }
     }, [formType])
 

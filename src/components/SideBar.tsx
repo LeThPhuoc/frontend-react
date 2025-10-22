@@ -2,11 +2,12 @@
 
 import React, { use, useState } from "react";
 import { css } from "@emotion/react";
+import { useNavigate } from "react-router-dom";
 
 const listRender = [
     {
         label: 'Quản trị viên', items: [
-            { label: 'Quản lý tài khoản', link: '/create_employ' },
+            { label: 'Quản lý tài khoản nhân viên', link: '/staff' },
             { label: 'Quản lý công trình', link: '' },
             { label: 'Quản lý vật tư', link: '' },
         ]
@@ -17,6 +18,7 @@ type Prop = {
 }
 
 export const SideBar = () => {
+    const navigate = useNavigate()
     const [activeIndex, setActiveIndex] = useState(listRender.map(() => false));
     const handleClickShowItems = (index: number) => {
         let newActiveIndex = [...activeIndex];
@@ -48,6 +50,15 @@ export const SideBar = () => {
                     )
                 })}
             </ul>
+            <button
+                css={btnLogout}
+                onClick={() => {
+                    localStorage.removeItem('token')
+                    navigate('/login')
+                }}
+            >
+                Đăng xuất
+            </button>
         </div>
     )
 }
@@ -58,10 +69,17 @@ const container = css`
     display: flex;
     color: white;
     flex-direction: column;
+    justify-content: space-between;
     background-color: #131357;
     ul {
 
         list-style: none;
+        padding-left: 10px
+    }
+    ul > li {
+        overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
     }
 `
 
@@ -77,4 +95,9 @@ const groupItem = (showItems: boolean) => css`
     text-decoration: none;
     color: white;
   }
+`
+
+const btnLogout = css`
+    padding: 10px 20px;
+    border-radius: 50px;
 `
