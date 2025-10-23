@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { css } from "@emotion/react";
 import api from "../../config_api/axiosConfig";
+import { CreateStaff } from "./createStaff";
 
 type ListStaff = {
     id: number;
@@ -16,6 +17,39 @@ type ListStaff = {
 export const Staff = () => {
 
     const [listStaff, setListStaff] = useState<ListStaff[]>([])
+    const [isOpenCreateStaff, setIsOpenCreateStaff] = useState(false)
+    const [isResetFormikRegister, setIsResetFormikRegister] = useState(false)
+
+    const handleCreateStaff = async (payload: any) => {
+        let data = null
+        if(payload) {
+            data = payload
+            await api.post('/create_staff', {
+                    login_name: data.login_name,
+                    name: data.name,
+                    tel: data.tel,
+                    address: data.address,
+                    email: data.email,
+                    password: data.password,
+                    salary: data.salary
+                }).then((response) => {
+                    setIsResetFormikRegister(true)
+                }).catch((error) => {
+                    console.log(error)
+                    setIsResetFormikRegister(false)
+
+                })
+        }
+    }
+
+        useEffect(() => {
+            if (isResetFormikRegister) {
+                const timer = setTimeout(() => {
+                    setIsResetFormikRegister(!isResetFormikRegister);
+                }, 3000);
+                return () => clearTimeout(timer);
+            }
+        }, [isResetFormikRegister])
 
     useEffect(() => {
         const getItems = async () => {
@@ -37,44 +71,46 @@ export const Staff = () => {
                         <label htmlFor="">Tìm kiếm nhân viên</label>
                         <input type="text" placeholder="Nhập để tìm kiếm..." />
                     </div>
-                    <button>Thêm nhân viên</button>
+                    <button onClick={() => setIsOpenCreateStaff(!isOpenCreateStaff)}>Thêm nhân viên</button>
                 </div>
             </div>
-            <table css={listStaffStyle}>
-                <thead>
-                    <tr>
-                        <td>Tên</td>
-                        <td>Tên đăng nhập</td>
-                        <td>Số điện thoại</td>
-                        <td>Email</td>
-                        <td>Lương</td>
-                        <td>Địa chỉ</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    {listStaff.length !== 0 &&
-                        listStaff.map((staff) => {
-                            return (
-                                <tr key={staff.id} css={itemStaffStyle}>
-                                    <td>{staff.name}</td>
-                                    <td>{staff.login_name}</td>
-                                    <td>{staff.tel}</td>
-                                    <td>{staff.email}</td>
-                                    <td>{staff.salary}</td>
-                                    <td>{staff.address}</td>
-                                </tr>
-                            )
-                        })
-                    }
-                </tbody>
-            </table>
+            {isOpenCreateStaff ? <CreateStaff resetFormik={isResetFormikRegister} handleCreateStaff={(payload) => handleCreateStaff(payload)} /> : (
+                <table css={listStaffStyle}>
+                    <thead>
+                        <tr>
+                            <td>Tên</td>
+                            <td>Tên đăng nhập</td>
+                            <td>Số điện thoại</td>
+                            <td>Email</td>
+                            <td>Lương</td>
+                            <td>Địa chỉ</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {listStaff.length !== 0 &&
+                            listStaff.map((staff) => {
+                                return (
+                                    <tr key={staff.id} css={itemStaffStyle}>
+                                        <td>{staff.name}</td>
+                                        <td>{staff.login_name}</td>
+                                        <td>{staff.tel}</td>
+                                        <td>{staff.email}</td>
+                                        <td>{staff.salary}</td>
+                                        <td>{staff.address}</td>
+                                    </tr>
+                                )
+                            })
+                        }
+                    </tbody>
+                </table>
+            )}
         </div>
-
     )
 }
 
 const container = css`
     padding: 20px;
+    height: calc(100% - 40px);
 `
 
 const header = css`
