@@ -6,6 +6,8 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Alert } from '../../components/Alert';
 import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { loginSuccess } from '../../features/redux/authSlide'
 
 const listFieldRegister: {
     label: string,
@@ -59,6 +61,7 @@ const validationSchemaRegister = Yup.object({
 
 export const LoginOrRegister = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const [formType, setFormType] = useState<'login' | 'register'>('login');
     const [isShowPassword, setIsShowPassword] = useState(false);
     const [statusAlert, setStatusAlert] = useState<{ message: string[] | unknown[], type: 'error' | 'success' } | null>();
@@ -85,6 +88,7 @@ export const LoginOrRegister = () => {
                 }).then((response) => {
                     localStorage.setItem('token', response.data.token);
                     localStorage.setItem('user', response.data.user);
+                    dispatch(loginSuccess(response.data))
                     setStatusAlert({ message: ['Đăng nhập thành công'], type: 'success' });
                     navigate('/', {state: response.data.token});
                 }).catch((error) => {
@@ -112,7 +116,7 @@ export const LoginOrRegister = () => {
     })
 
     useEffect(() => {
-        if(localStorage.getItem('token')){
+        if (localStorage.getItem('token')) {
             navigate('/')
         }
     }, [])
