@@ -5,6 +5,7 @@ import api from '../../config_api/axiosConfig';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Alert } from '../../components/Alert';
+import { TextField } from '../../components/input/TextField';
 
 type Props = {
     handleCreateStaff: (payload: User) => void
@@ -83,7 +84,6 @@ export const CreateStaff = ({handleCreateStaff, resetFormik}:Props) => {
         }
     })
 
-    console.log(resetFormik)
     useEffect(() => {
     if(resetFormik) {
         formik.resetForm()
@@ -114,14 +114,15 @@ export const CreateStaff = ({handleCreateStaff, resetFormik}:Props) => {
                     return (
                         <div css={field} key={index}>
                             <label htmlFor={item.name}>{item.label}</label>
-                            <input
+                            <TextField isFullWidth placeholder={item.placeholder} value={formik.values[item.name]} onChange={(text) => formik.setFieldValue(item.name, text)} />
+                            {/* <input
                                 id={item.name}
                                 css={fieldInput}
                                 type={(item.name === 'password' ? (isShowPassword ? "text" : "password") : item.type)}
                                 placeholder={item.placeholder}
                                 value={formik.values[item.name as keyof User]}
                                 onChange={(e) => formik.setFieldValue(item.name, e.target.value )}
-                            />
+                            /> */}
                             {formik.errors[item.name as keyof User] && <div style={{ color: 'red', fontSize: '13px' }}>{formik.errors[item.name as keyof User]}</div>}
                         </div>
                     )
