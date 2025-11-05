@@ -7,6 +7,7 @@ import { SideBar } from './components/SideBar';
 import { css } from '@emotion/react';
 import { Staff } from './pages/staff/staff';
 import { AuthThenticatedRoute } from './route/authThenticatedRoute';
+import { Project } from './pages/project/project';
 
 function App() {
   const isAuthenticated = !!localStorage.getItem('token');
@@ -24,6 +25,7 @@ function App() {
             <Route path="/login" element={<LoginOrRegister />} />
             <Route element={<AuthThenticatedRoute isAuthenticated={(isAuthenticated || location.state)} />}>
               <Route path="/staff" element={<Staff />} />
+              <Route path="/project" element={<Project />} />
             </Route>
           </Routes>
         </div>

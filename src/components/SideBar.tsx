@@ -8,7 +8,7 @@ const listRender = [
     {
         label: 'Quản trị viên', items: [
             { label: 'Quản lý tài khoản nhân viên', link: '/staff' },
-            { label: 'Quản lý công trình', link: '' },
+            { label: 'Quản lý công trình', link: '/project' },
             { label: 'Quản lý vật tư', link: '' },
         ]
     }

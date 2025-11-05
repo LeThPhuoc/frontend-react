@@ -1,0 +1,94 @@
+/** @jsxImportSource @emotion/react */
+import { css } from "@emotion/react"
+import { TextField } from "../../components/input/TextField"
+import { useFormik } from "formik"
+import * as Yup from 'yup'
+
+const validationSchema = Yup.object({
+    name: Yup.string().required('Bạn chưa nhập tên dự án'),
+    description: Yup.string().required('Bạn chưa nhập mô tả dự án'),
+});
+
+export const CreateProject = () => {
+    const formik = useFormik({
+        initialValues: {
+            name: '',
+            description: '',
+            start_date: '',
+            end_date: '',
+            image: '',
+        },
+        validateOnMount: false,
+        validateOnChange: false,
+        validateOnBlur: false,
+        validationSchema,
+        onSubmit: values => {
+            console.log(values)
+        }
+    })
+    console.log(formik.errors)
+    return (
+        <div css={container}>
+            <div css={content}>
+                <h2>thông tin tạo mới dự án</h2>
+                <TextField
+                    label="Tên dự án"
+                    errorText={formik.errors.name}
+                    placeholder="Tên dự án"
+                    isFullWidth 
+                    value={formik.values.name}
+                    onChange={(e) => formik.setFieldValue('name', e)}
+                />
+                <TextField
+                    label="Mô tả dự án"
+                    errorText={formik.errors.description}
+                    placeholder="Mô tả dự án"
+                    isFullWidth
+                    value={formik.values.description}
+                    onChange={(e) => formik.setFieldValue('description', e)}
+                />
+                <TextField
+                    label="Chọn ảnh"
+                    type="file"
+                    isFullWidth
+                    value={formik.values.image}
+                    onChange={(e) => formik.setFieldValue('image', e)}
+                />
+                <TextField
+                    label="Ngày bắt đầu"
+                    type="date"
+                    placeholder="ngày bắt đầu"
+                    isFullWidth
+                    value={formik.values.start_date}
+                    onChange={(e) => formik.setFieldValue('start_date', e)}
+                />
+                <TextField
+                    label="Ngày kết thúc"
+                    type="date"
+                    isFullWidth
+                    value={formik.values.end_date}
+                    onChange={(e) => formik.setFieldValue('end_date', e)}
+                />
+                <button onClick={() => formik.submitForm()}>tạo mới</button>
+            </div>
+        </div>
+    )
+}
+
+const container = css`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+`
+
+const content = css`
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 20px;
+    border-radius: 20px;
+    border: 1px solid #EAE9EE;
+    box-shadow: 0px 0px 4px 0px #ccc;
+`
