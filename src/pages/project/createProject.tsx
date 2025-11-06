@@ -3,24 +3,17 @@ import { css } from "@emotion/react"
 import { TextField } from "../../components/input/TextField"
 import { useFormik } from "formik"
 import * as Yup from 'yup'
-import api from "../../config_api/axiosConfig";
 import { useAlert } from "../../components/Alert/AlertProvider";
+import { createProjectApi, DataCreateProject } from "../../api/project/createProjectApi";
 
 const validationSchema = Yup.object({
     name: Yup.string().required('Bạn chưa nhập tên dự án'),
     description: Yup.string().required('Bạn chưa nhập mô tả dự án'),
 });
 
-type Formik = {
-    name: string,
-    description: string,
-    start_date: string,
-    end_date: string,
-}
-
 export const CreateProject = () => {
     const { showAlert } = useAlert()
-    const formik = useFormik<Formik>({
+    const formik = useFormik<DataCreateProject>({
         initialValues: {
             name: '',
             description: '',
@@ -32,26 +25,16 @@ export const CreateProject = () => {
         validateOnBlur: false,
         validationSchema,
         onSubmit: async values => {
-            const role = localStorage.getItem('role')
-            if (role === 'boss') {
-                const idBoss = localStorage.getItem('user')
-                await api.post(`/create_project/${JSON.parse(idBoss ?? '').id}`, {
-                    name: values.name,
-                    description: values.description,
-                    end_date: values.end_date,
-                    start_date: values.start_date
-                }).then((response) => {
-                    formik.resetForm()
+            createProjectApi({
+                data: values, failure: (e) => {
+                    showAlert(e.response.data.message, 'error')
+                }, success: () => {
                     showAlert('Tạo mới dự án thành công', 'success')
-                }).catch((error) => {
-                    console.log(error)
-                    showAlert(error.response.data.message, 'error')
-
-                })
-            }
+                }
+            })
         }
     })
-    
+
     return (
         <div css={container}>
             <div css={content}>
@@ -77,14 +60,14 @@ export const CreateProject = () => {
                     type="date"
                     placeholder="ngày bắt đầu"
                     isFullWidth
-                    value={formik.values.start_date}
+                    value={formik.values.start_date ?? ''}
                     onChange={(e) => formik.setFieldValue('start_date', e.target.value)}
                 />
                 <TextField
                     label="Ngày kết thúc"
                     type="date"
                     isFullWidth
-                    value={formik.values.end_date}
+                    value={formik.values.end_date ?? ''}
                     onChange={(e) => formik.setFieldValue('end_date', e.target.value)}
                 />
                 <button onClick={() => formik.submitForm()}>tạo mới</button>
