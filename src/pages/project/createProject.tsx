@@ -3,30 +3,51 @@ import { css } from "@emotion/react"
 import { TextField } from "../../components/input/TextField"
 import { useFormik } from "formik"
 import * as Yup from 'yup'
+import api from "../../config_api/axiosConfig";
 
 const validationSchema = Yup.object({
     name: Yup.string().required('Bạn chưa nhập tên dự án'),
     description: Yup.string().required('Bạn chưa nhập mô tả dự án'),
 });
 
+type Formik = {
+    name: string,
+    description: string,
+    start_date: string,
+    end_date: string,
+}
+
 export const CreateProject = () => {
-    const formik = useFormik({
+    const formik = useFormik<Formik>({
         initialValues: {
             name: '',
             description: '',
             start_date: '',
             end_date: '',
-            image: '',
         },
         validateOnMount: false,
         validateOnChange: false,
         validateOnBlur: false,
         validationSchema,
-        onSubmit: values => {
-            console.log(values)
+        onSubmit: async values => {
+            const role = localStorage.getItem('role')
+            if(role === 'boss') {
+                const idBoss = localStorage.getItem('user') 
+                await api.post(`/create_project/${JSON.parse(idBoss ?? '').id}`, {
+                    name: values.name,
+                    description: values.description,
+                    end_date: values.end_date,
+                    start_date: values.start_date
+                }).then((response) => {
+                    
+                }).catch((error) => {
+                    console.log(error)
+                    
+                })
+            }
         }
     })
-    console.log(formik.errors)
+    console.log(formik.values)
     return (
         <div css={container}>
             <div css={content}>
@@ -35,9 +56,9 @@ export const CreateProject = () => {
                     label="Tên dự án"
                     errorText={formik.errors.name}
                     placeholder="Tên dự án"
-                    isFullWidth 
+                    isFullWidth
                     value={formik.values.name}
-                    onChange={(e) => formik.setFieldValue('name', e)}
+                    onChange={(e) => formik.setFieldValue('name', e.target.value)}
                 />
                 <TextField
                     label="Mô tả dự án"
@@ -45,14 +66,7 @@ export const CreateProject = () => {
                     placeholder="Mô tả dự án"
                     isFullWidth
                     value={formik.values.description}
-                    onChange={(e) => formik.setFieldValue('description', e)}
-                />
-                <TextField
-                    label="Chọn ảnh"
-                    type="file"
-                    isFullWidth
-                    value={formik.values.image}
-                    onChange={(e) => formik.setFieldValue('image', e)}
+                    onChange={(e) => formik.setFieldValue('description', e.target.value)}
                 />
                 <TextField
                     label="Ngày bắt đầu"
@@ -60,14 +74,14 @@ export const CreateProject = () => {
                     placeholder="ngày bắt đầu"
                     isFullWidth
                     value={formik.values.start_date}
-                    onChange={(e) => formik.setFieldValue('start_date', e)}
+                    onChange={(e) => formik.setFieldValue('start_date', e.target.value)}
                 />
                 <TextField
                     label="Ngày kết thúc"
                     type="date"
                     isFullWidth
                     value={formik.values.end_date}
-                    onChange={(e) => formik.setFieldValue('end_date', e)}
+                    onChange={(e) => formik.setFieldValue('end_date', e.target.value)}
                 />
                 <button onClick={() => formik.submitForm()}>tạo mới</button>
             </div>

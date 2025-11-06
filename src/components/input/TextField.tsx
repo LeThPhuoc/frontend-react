@@ -1,12 +1,13 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react"
+import { ChangeEvent } from "react"
 
 type Props = {
     placeholder?: string
     size?: 'md' | 'sm' | 'lg'
     value: string | number
-    onChange: (value: string) => void
+    onChange: (value: ChangeEvent<HTMLInputElement>) => void
     isFullWidth?: boolean
     type?: string
     errorText?: string
@@ -44,10 +45,11 @@ export const TextField = ({ placeholder, size = 'md', value, onChange, isFullWid
             )}
             <input
                 css={[baseCss, (size && sizeCss(size)), isFullWidth && css`width: 100%;`]}
-                onChange={(e) => onChange(e.target.value)}
+                onChange={(e) => onChange(e)}
                 value={value}
                 placeholder={placeholder}
-                type={type} />
+                type={type} 
+                />
             {errorText && (
                 <span css={errorTextStyle}>{errorText}</span>
             )}

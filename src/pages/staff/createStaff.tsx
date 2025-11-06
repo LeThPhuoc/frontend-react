@@ -46,7 +46,7 @@ const validationSchemaRegister = Yup.object({
     email: Yup.string().required('Bạn chưa nhập địa chỉ email').email('Email không hợp lệ'),
 });
 
-export const CreateStaff = ({handleCreateStaff, resetFormik}:Props) => {
+export const CreateStaff = ({ handleCreateStaff, resetFormik }: Props) => {
     const [isShowPassword, setIsShowPassword] = useState(false);
     const [statusAlert, setStatusAlert] = useState<{ message: string[] | unknown[], type: 'error' | 'success' } | null>();
 
@@ -85,11 +85,10 @@ export const CreateStaff = ({handleCreateStaff, resetFormik}:Props) => {
     })
 
     useEffect(() => {
-    if(resetFormik) {
-        formik.resetForm()
-    }
+        if (resetFormik) {
+            formik.resetForm()
+        }
 
-        
     }, [resetFormik])
 
     useEffect(() => {
@@ -114,15 +113,12 @@ export const CreateStaff = ({handleCreateStaff, resetFormik}:Props) => {
                     return (
                         <div css={field} key={index}>
                             <label htmlFor={item.name}>{item.label}</label>
-                            <TextField isFullWidth placeholder={item.placeholder} value={formik.values[item.name]} onChange={(text) => formik.setFieldValue(item.name, text)} />
-                            {/* <input
-                                id={item.name}
-                                css={fieldInput}
-                                type={(item.name === 'password' ? (isShowPassword ? "text" : "password") : item.type)}
+                            <TextField
+                                isFullWidth
                                 placeholder={item.placeholder}
-                                value={formik.values[item.name as keyof User]}
-                                onChange={(e) => formik.setFieldValue(item.name, e.target.value )}
-                            /> */}
+                                value={formik.values[item.name]}
+                                onChange={(text) => formik.setFieldValue(item.name, text.target.value)}
+                            />
                             {formik.errors[item.name as keyof User] && <div style={{ color: 'red', fontSize: '13px' }}>{formik.errors[item.name as keyof User]}</div>}
                         </div>
                     )

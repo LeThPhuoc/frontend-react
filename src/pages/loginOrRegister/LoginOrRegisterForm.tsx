@@ -87,7 +87,8 @@ export const LoginOrRegister = () => {
                     password: values.password
                 }).then((response) => {
                     localStorage.setItem('token', response.data.token);
-                    localStorage.setItem('user', response.data.user);
+                    localStorage.setItem('user', JSON.stringify(response.data.user));
+                    localStorage.setItem('role', response.data.role);
                     dispatch(loginSuccess(response.data))
                     setStatusAlert({ message: ['Đăng nhập thành công'], type: 'success' });
                     navigate('/', {state: response.data.token});

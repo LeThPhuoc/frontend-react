@@ -15,7 +15,7 @@ export const Project = () => {
                 </div>
                 <div css={headerTool}>
                     <label htmlFor="">tìm kiếm</label>
-                    <TextField onChange={(e) => console.log(e)} value={''} />
+                    <TextField onChange={(e) => console.log(e.target.value)} value={''} />
                     <button onClick={() => setIsCreateProject(!isCreateProject)}>{isCreateProject ? 'danh sách dự án' : 'tạo mơi dự án'}</button>
                 </div>
             </div>
