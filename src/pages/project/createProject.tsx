@@ -4,6 +4,7 @@ import { TextField } from "../../components/input/TextField"
 import { useFormik } from "formik"
 import * as Yup from 'yup'
 import api from "../../config_api/axiosConfig";
+import { useAlert } from "../../components/Alert/AlertProvider";
 
 const validationSchema = Yup.object({
     name: Yup.string().required('Bạn chưa nhập tên dự án'),
@@ -18,6 +19,7 @@ type Formik = {
 }
 
 export const CreateProject = () => {
+    const { showAlert } = useAlert()
     const formik = useFormik<Formik>({
         initialValues: {
             name: '',
@@ -31,23 +33,25 @@ export const CreateProject = () => {
         validationSchema,
         onSubmit: async values => {
             const role = localStorage.getItem('role')
-            if(role === 'boss') {
-                const idBoss = localStorage.getItem('user') 
+            if (role === 'boss') {
+                const idBoss = localStorage.getItem('user')
                 await api.post(`/create_project/${JSON.parse(idBoss ?? '').id}`, {
                     name: values.name,
                     description: values.description,
                     end_date: values.end_date,
                     start_date: values.start_date
                 }).then((response) => {
-                    
+                    formik.resetForm()
+                    showAlert('Tạo mới dự án thành công', 'success')
                 }).catch((error) => {
                     console.log(error)
-                    
+                    showAlert(error.response.data.message, 'error')
+
                 })
             }
         }
     })
-    console.log(formik.values)
+    
     return (
         <div css={container}>
             <div css={content}>

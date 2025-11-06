@@ -4,10 +4,10 @@ import { css } from '@emotion/react';
 import api from '../../config_api/axiosConfig';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { Alert } from '../../components/Alert';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { loginSuccess } from '../../features/redux/authSlide'
+import { useAlert } from '../../components/Alert/AlertProvider';
 
 const listFieldRegister: {
     label: string,
@@ -60,11 +60,11 @@ const validationSchemaRegister = Yup.object({
 });
 
 export const LoginOrRegister = () => {
+    const { showAlert } = useAlert()
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [formType, setFormType] = useState<'login' | 'register'>('login');
     const [isShowPassword, setIsShowPassword] = useState(false);
-    const [statusAlert, setStatusAlert] = useState<{ message: string[] | unknown[], type: 'error' | 'success' } | null>();
 
     const formik = useFormik<Formik>({
         initialValues: {
@@ -90,10 +90,10 @@ export const LoginOrRegister = () => {
                     localStorage.setItem('user', JSON.stringify(response.data.user));
                     localStorage.setItem('role', response.data.role);
                     dispatch(loginSuccess(response.data))
-                    setStatusAlert({ message: ['Đăng nhập thành công'], type: 'success' });
-                    navigate('/', {state: response.data.token});
+                    showAlert('Đăng nhập thành công', 'success');
+                    navigate('/', { state: response.data.token });
                 }).catch((error) => {
-                    setStatusAlert({ message: Object.values(error.response.data.errors).flat(), type: 'error' });
+                    showAlert(error.response.data.message, 'error');
                 })
             } else {
                 await api.post('/store', {
@@ -105,12 +105,12 @@ export const LoginOrRegister = () => {
                     is_admin: values.is_admin,
                     password: values.password
                 }).then((response) => {
-                    setStatusAlert({ message: ['Đăng kí thành công'], type: 'success' });
+                    showAlert('Đăng kí thành công', 'success');
                     setFormType('login')
 
                 }).catch((error) => {
                     console.log(error)
-                    setStatusAlert({ message: (error.response.data.errors ? Object.values(error.response.data.errors).flat() : error.response.data.message), type: 'error' });
+                    showAlert(error.response.data.message, 'error');
                 })
             }
         }
@@ -123,15 +123,6 @@ export const LoginOrRegister = () => {
     }, [])
 
     useEffect(() => {
-        if (statusAlert) {
-            const timer = setTimeout(() => {
-                setStatusAlert(null);
-            }, 3000);
-            return () => clearTimeout(timer);
-        }
-    }, [statusAlert])
-
-    useEffect(() => {
         if (formType) {
             formik.setValues({
                 login_name: '', password: '', name: '', tel: '', address: '', email: '', is_admin: '0'
@@ -142,11 +133,6 @@ export const LoginOrRegister = () => {
 
     return (
         <div css={container}>
-            {statusAlert && (
-                statusAlert.message.length > 0 && (
-                    <Alert type={statusAlert.type} message={statusAlert.message} />
-                )
-            )}
             <div css={content}>
                 <h2>{formType === 'login' ? 'Thông tin đăng nhập' : 'Thông tin đăng kí'}</h2>
                 {(formType === 'login' ? listFieldLogin : listFieldRegister).map((item, index) => {
