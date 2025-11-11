@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { Navigate } from 'react-router-dom';
 
 const BASE_URL_CALL_API = process.env.REACT_APP_BASE_URL_API
 
@@ -29,8 +28,7 @@ api.interceptors.response.use(
     const status = error.response ? error.response.status : null;
 
     if (status === 401) {
-      console.log('Lỗi 401 - Unauthorized. Chuyển hướng về trang đăng nhập.');
-      <Navigate to="/login" replace/>
+      window.location.href = "/login"
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       localStorage.removeItem('role');

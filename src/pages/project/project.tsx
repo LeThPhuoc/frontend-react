@@ -2,13 +2,26 @@
 
 import { css } from "@emotion/react"
 import { TextField } from "../../components/input/TextField"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { CreateProject } from "./createProject"
-import api from "../../config_api/axiosConfig"
+import { DataListProject, getListProjectApi } from "../../api/project/getListProjectApi"
+import { ProjectItem } from "../../features/project/component/projectItem"
+import { flex, flexCol, gap } from "../../style/style"
 
 export const Project = () => {
     const [isCreateProject, setIsCreateProject] = useState(false)
-    api.get(`/project/get_project/${localStorage.getItem('role')}/${JSON.parse(localStorage.getItem('user') ?? '').id}`)
+    const [listProject, setListProject] = useState<DataListProject[]>([])
+
+    useEffect(() => {
+        if (!isCreateProject) {
+            getListProjectApi({
+                success: (data) => {
+                    setListProject(data ?? [])
+                }
+            })
+        }
+    }, [isCreateProject])
+
     return (
         <div css={container}>
             <div css={header}>
@@ -21,27 +34,18 @@ export const Project = () => {
                     <button onClick={() => setIsCreateProject(!isCreateProject)}>{isCreateProject ? 'danh sách dự án' : 'tạo mơi dự án'}</button>
                 </div>
             </div>
-            {isCreateProject && (
+            {isCreateProject ? (
                 <CreateProject />
-            )}
-            <div css={project}>
-                <div>
-                    <div>
-                        name
+            ) :
+                (
+                    <div css={[flex, flexCol, gap(10)]}>
+                        {listProject.map((item) => {
+                            return (
+                                <ProjectItem item={item} key={item.id} />
+                            )
+                        })}
                     </div>
-                    <div>description</div>
-                    <div>start_date</div>
-                    <div>end_date</div>
-                </div>
-                <div>
-                    <div>
-                        <div>nhân viên thuộc dự án</div>
-                    </div>
-                    <div>
-                        <div>người quản lí dự án</div>
-                    </div>
-                </div>
-            </div>
+                )}
         </div>
     )
 }
@@ -63,14 +67,4 @@ const headerTool = css`
     display: flex;
     gap: 8px;
     align-items: center;
-`
-
-const project = css`
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    box-shadow: 0px 0px 4px 0px #ccc;
 `
