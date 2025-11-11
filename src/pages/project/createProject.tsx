@@ -9,6 +9,7 @@ import { createProjectApi, DataCreateProject } from "../../api/project/createPro
 const validationSchema = Yup.object({
     name: Yup.string().required('Bạn chưa nhập tên dự án'),
     description: Yup.string().required('Bạn chưa nhập mô tả dự án'),
+    address: Yup.string().required('Bạn chưa nhập địa chỉ dự án'),
 });
 
 export const CreateProject = () => {
@@ -16,6 +17,7 @@ export const CreateProject = () => {
     const formik = useFormik<DataCreateProject>({
         initialValues: {
             name: '',
+            address: '',
             description: '',
             start_date: '',
             end_date: '',
@@ -27,7 +29,7 @@ export const CreateProject = () => {
         onSubmit: async values => {
             createProjectApi({
                 data: values, failure: (e) => {
-                    showAlert(e.response.data.message, 'error')
+                    showAlert(e.response?.data.message ?? 'Có lỗi vui lòng thử lại', 'error')
                 }, success: () => {
                     showAlert('Tạo mới dự án thành công', 'success')
                 }
@@ -54,6 +56,14 @@ export const CreateProject = () => {
                     isFullWidth
                     value={formik.values.description}
                     onChange={(e) => formik.setFieldValue('description', e.target.value)}
+                />
+                <TextField
+                    label="Địa chỉ dự án"
+                    errorText={formik.errors.address}
+                    placeholder="Địa chỉ dự án"
+                    isFullWidth
+                    value={formik.values.address}
+                    onChange={(e) => formik.setFieldValue('address', e.target.value)}
                 />
                 <TextField
                     label="Ngày bắt đầu"
