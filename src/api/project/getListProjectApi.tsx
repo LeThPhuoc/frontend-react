@@ -37,6 +37,9 @@ export type Staff = {
     address: string,
     login_name: string,
     email: string
+    role: string,
+    salary: string
+    user: 'staff'
 }
 
 export type Boss = {
@@ -46,4 +49,5 @@ export type Boss = {
     address: string,
     login_name: string,
     email: string
+    user: 'boss'
 }

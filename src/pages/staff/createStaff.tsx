@@ -4,13 +4,11 @@ import { css } from '@emotion/react';
 import api from '../../config_api/axiosConfig';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { Alert } from '../../components/Alert';
 import { TextField } from '../../components/input/TextField';
 import { Modal } from '../../components/modal/modal';
 
 type Props = {
     handleCreateStaff: (payload: User) => void
-    resetFormik: boolean
     isOpen: boolean
     onClose: () => void
 }
@@ -25,7 +23,6 @@ const listFieldRegister: {
         { label: 'Tên đầy đủ', name: 'name', type: 'text', placeholder: 'Tên đầy đủ' },
         { label: 'Số điện thoại', name: 'tel', type: 'text', placeholder: 'Số điện thoại' },
         { label: 'Địa chỉ', name: 'address', type: 'text', placeholder: 'Địa chỉ' },
-        { label: 'Vị trí', name: 'role', type: 'text', placeholder: 'Vị trí' },
         { label: 'Email', name: 'email', type: 'text', placeholder: 'Email' },
         { label: 'Mật khẩu', name: 'password', type: 'password', placeholder: 'Mật khẩu' },
     ]
@@ -37,7 +34,6 @@ type User = {
     tel: string,
     address: string,
     email: string,
-    role: string,
 }
 
 const validationSchemaRegister = Yup.object({
@@ -47,10 +43,10 @@ const validationSchemaRegister = Yup.object({
     tel: Yup.string().required('Bạn chưa nhập số điện thoại').min(10, 'Số điện thoại tối thiểu 10 số').max(11, 'Số điện thoại tối đa 11 số'),
     address: Yup.string().required('Bạn chưa nhập địa chỉ'),
     email: Yup.string().required('Bạn chưa nhập địa chỉ email').email('Email không hợp lệ'),
-    role: Yup.number().nullable().typeError('Giá trị phải là một số')
+    role: Yup.string().nullable()
 });
 
-export const CreateStaff = ({ handleCreateStaff, resetFormik, isOpen, onClose }: Props) => {
+export const CreateStaff = ({ handleCreateStaff, isOpen, onClose }: Props) => {
     const [isShowPassword, setIsShowPassword] = useState(false);
     const [statusAlert, setStatusAlert] = useState<{ message: string[] | unknown[], type: 'error' | 'success' } | null>();
 
@@ -62,7 +58,6 @@ export const CreateStaff = ({ handleCreateStaff, resetFormik, isOpen, onClose }:
             tel: '',
             address: '',
             email: '',
-            role: ''
         },
         validateOnMount: false,
         validateOnChange: false,
@@ -72,13 +67,6 @@ export const CreateStaff = ({ handleCreateStaff, resetFormik, isOpen, onClose }:
             handleCreateStaff(values)
         }
     })
-
-    useEffect(() => {
-        if (resetFormik) {
-            formik.resetForm()
-        }
-
-    }, [resetFormik])
 
     useEffect(() => {
         if (statusAlert) {
@@ -92,11 +80,6 @@ export const CreateStaff = ({ handleCreateStaff, resetFormik, isOpen, onClose }:
     return (
         <Modal isOpen={isOpen} onClose={onClose} title='Thông tin đăng kí'>
             <div css={container}>
-                {statusAlert && (
-                    statusAlert.message.length > 0 && (
-                        <Alert type={statusAlert.type} message={statusAlert.message} />
-                    )
-                )}
                 <div css={content}>
                     {listFieldRegister.map((item, index) => {
                         return (

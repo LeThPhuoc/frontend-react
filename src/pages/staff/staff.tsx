@@ -11,7 +11,6 @@ type ListStaff = {
     email: string;
     tel: string;
     login_name: string;
-    role: string;
     address: string;
 }
 
@@ -32,10 +31,10 @@ export const Staff = () => {
                 address: data.address,
                 email: data.email,
                 password: data.password,
-                role: data.role
             }).then((response) => {
                 showAlert('Tạo mới nhân viên thành công', 'success')
                 setIsResetFormikRegister(true)
+                setIsOpenCreateStaff(false)
             }).catch((error) => {
                 console.log(error)
                 showAlert(error.response.data.message[0] ?? '', 'error')
@@ -80,7 +79,6 @@ export const Staff = () => {
             {isOpenCreateStaff && <CreateStaff
                 isOpen={isOpenCreateStaff}
                 onClose={() => setIsOpenCreateStaff(false)}
-                resetFormik={isResetFormikRegister}
                 handleCreateStaff={(payload) => handleCreateStaff(payload)}
             />}
             <table css={listStaffStyle}>
@@ -90,7 +88,6 @@ export const Staff = () => {
                         <td>Tên đăng nhập</td>
                         <td>Số điện thoại</td>
                         <td>Email</td>
-                        <td>vị trí</td>
                         <td>Địa chỉ</td>
                     </tr>
                 </thead>
@@ -103,7 +100,6 @@ export const Staff = () => {
                                     <td>{staff.login_name}</td>
                                     <td>{staff.tel}</td>
                                     <td>{staff.email}</td>
-                                    <td>{staff.role}</td>
                                     <td>{staff.address}</td>
                                 </tr>
                             )

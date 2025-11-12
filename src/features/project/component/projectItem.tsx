@@ -43,7 +43,7 @@ export const ProjectItem = ({ item }: Prop) => {
                     <div css={listProjectPerson}>
                         {item.staff.map((m) => {
                             return (
-                                <ProjectPersoninfoCard onClick={() => setShowProjectPerson(m)} key={m.id} data={m} />
+                                <ProjectPersoninfoCard onClick={() => setShowProjectPerson({...m, user: 'staff'})} key={m.id} data={m} />
                             )
                         })}
                     </div>
@@ -53,7 +53,7 @@ export const ProjectItem = ({ item }: Prop) => {
                     <div css={listProjectPerson}>
                         {item.boss.map((m) => {
                             return (
-                                <ProjectPersoninfoCard onClick={() => setShowProjectPerson(m)} key={m.id} data={m} />
+                                <ProjectPersoninfoCard onClick={() => setShowProjectPerson({...m, user: 'boss'})} key={m.id} data={m} />
                             )
                         })}
                     </div>
@@ -89,6 +89,18 @@ export const ProjectItem = ({ item }: Prop) => {
                             <div>địa chỉ :</div>
                             <div>{showProjectPerson.address}</div>
                         </div>
+                        {showProjectPerson.user === 'staff' && (
+                            <>
+                                <div css={[flex, gap(5)]}>
+                                    <div>đảm nhiệm vị trí :</div>
+                                    <div>{showProjectPerson.role}</div>
+                                </div>
+                                <div css={[flex, gap(5)]}>
+                                    <div>mức lương :</div>
+                                    <div>{showProjectPerson.salary}</div>
+                                </div>
+                            </>
+                        )}
                     </div>
                 </Modal>
             )}
