@@ -59,7 +59,7 @@ export const ProjectItem = ({ item }: Prop) => {
                     </div>
                 </div>
             </div>
-            {showProjectPerson && (
+            {!!showProjectPerson && (
                 <Modal
                     isOpen={!!showProjectPerson}
                     title="Thông tin"
@@ -92,6 +92,9 @@ export const ProjectItem = ({ item }: Prop) => {
                     </div>
                 </Modal>
             )}
+            <div className="abc">
+                <div>fasdf</div>
+            </div>
         </div>
     )
 }
@@ -99,6 +102,7 @@ export const ProjectItem = ({ item }: Prop) => {
 const maxWidth1150px = '1150px'
 
 const project = css`
+    position: relative;
     display: flex;
     justify-content: space-between;
     width: 100%;
@@ -107,7 +111,22 @@ const project = css`
     border: 1px solid #ccc;
     border-radius: 10px;
     box-shadow: 0px 0px 4px 0px #ccc;
-    transition: all .3 ease-out;
+    transition: all .3s ease-out;
+    .abc {
+        transition: all 8s ease-out;
+        position: absolute;
+        top: 20px;
+        right: 10px;
+        /* opacity: 0; */
+        display: none;
+        cursor: pointer;
+    }
+    :hover {
+        .abc {
+            /* opacity: 1; */
+            display: block;
+        }
+    }
     @media (max-width: ${maxWidth1150px}) {
         flex-direction: column;
         gap: 20px;

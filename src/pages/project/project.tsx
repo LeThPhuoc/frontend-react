@@ -34,18 +34,16 @@ export const Project = () => {
                     <button onClick={() => setIsCreateProject(!isCreateProject)}>{isCreateProject ? 'danh sách dự án' : 'tạo mơi dự án'}</button>
                 </div>
             </div>
-            {isCreateProject ? (
-                <CreateProject />
-            ) :
-                (
-                    <div css={[flex, flexCol, gap(10)]}>
-                        {listProject.map((item) => {
-                            return (
-                                <ProjectItem item={item} key={item.id} />
-                            )
-                        })}
-                    </div>
-                )}
+            {isCreateProject && (
+                <CreateProject isOpen={isCreateProject} onClose={() => setIsCreateProject(false)} />
+            )}
+            <div css={[flex, flexCol, gap(10)]}>
+                {listProject.map((item) => {
+                    return (
+                        <ProjectItem item={item} key={item.id} />
+                    )
+                })}
+            </div>
         </div>
     )
 }
@@ -60,6 +58,7 @@ const container = css`
 
 const header = css`
     display: flex;
+    align-items: center;
     justify-content: space-between;
 `
 

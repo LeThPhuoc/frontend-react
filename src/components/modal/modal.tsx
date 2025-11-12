@@ -60,6 +60,7 @@ const content = css`
     padding: 20px;
     border-radius: 20px;
     min-width: 500px;
+    max-height: 80vh;
 `
 
 const header = css`

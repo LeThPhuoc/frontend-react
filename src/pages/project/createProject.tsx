@@ -5,6 +5,7 @@ import { useFormik } from "formik"
 import * as Yup from 'yup'
 import { useAlert } from "../../components/Alert/AlertProvider";
 import { createProjectApi, DataCreateProject } from "../../api/project/createProjectApi";
+import { Modal } from "../../components/modal/modal";
 
 const validationSchema = Yup.object({
     name: Yup.string().required('Bạn chưa nhập tên dự án'),
@@ -12,7 +13,12 @@ const validationSchema = Yup.object({
     address: Yup.string().required('Bạn chưa nhập địa chỉ dự án'),
 });
 
-export const CreateProject = () => {
+type Props = {
+    isOpen: boolean
+    onClose: () => void
+}
+
+export const CreateProject = ({ isOpen, onClose }: Props) => {
     const { showAlert } = useAlert()
     const formik = useFormik<DataCreateProject>({
         initialValues: {
@@ -38,9 +44,8 @@ export const CreateProject = () => {
     })
 
     return (
-        <div css={container}>
+        <Modal isOpen={isOpen} onClose={onClose} title="thông tin tạo mới dự án">
             <div css={content}>
-                <h2>thông tin tạo mới dự án</h2>
                 <TextField
                     label="Tên dự án"
                     errorText={formik.errors.name}
@@ -82,24 +87,13 @@ export const CreateProject = () => {
                 />
                 <button onClick={() => formik.submitForm()}>tạo mới</button>
             </div>
-        </div>
+        </Modal>
     )
 }
-
-const container = css`
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    flex: 1;
-`
 
 const content = css`
     display: flex;
     flex-direction: column;
     gap: 8px;
     padding: 20px;
-    border-radius: 20px;
-    border: 1px solid #EAE9EE;
-    box-shadow: 0px 0px 4px 0px #ccc;
 `

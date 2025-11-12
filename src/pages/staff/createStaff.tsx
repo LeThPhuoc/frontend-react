@@ -6,10 +6,13 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Alert } from '../../components/Alert';
 import { TextField } from '../../components/input/TextField';
+import { Modal } from '../../components/modal/modal';
 
 type Props = {
     handleCreateStaff: (payload: User) => void
     resetFormik: boolean
+    isOpen: boolean
+    onClose: () => void
 }
 
 const listFieldRegister: {
@@ -22,7 +25,7 @@ const listFieldRegister: {
         { label: 'Tên đầy đủ', name: 'name', type: 'text', placeholder: 'Tên đầy đủ' },
         { label: 'Số điện thoại', name: 'tel', type: 'text', placeholder: 'Số điện thoại' },
         { label: 'Địa chỉ', name: 'address', type: 'text', placeholder: 'Địa chỉ' },
-        { label: 'Lương', name: 'salary', type: 'text', placeholder: 'Lương' },
+        { label: 'Vị trí', name: 'role', type: 'text', placeholder: 'Vị trí' },
         { label: 'Email', name: 'email', type: 'text', placeholder: 'Email' },
         { label: 'Mật khẩu', name: 'password', type: 'password', placeholder: 'Mật khẩu' },
     ]
@@ -34,7 +37,7 @@ type User = {
     tel: string,
     address: string,
     email: string,
-    salary: string,
+    role: string,
 }
 
 const validationSchemaRegister = Yup.object({
@@ -44,9 +47,10 @@ const validationSchemaRegister = Yup.object({
     tel: Yup.string().required('Bạn chưa nhập số điện thoại').min(10, 'Số điện thoại tối thiểu 10 số').max(11, 'Số điện thoại tối đa 11 số'),
     address: Yup.string().required('Bạn chưa nhập địa chỉ'),
     email: Yup.string().required('Bạn chưa nhập địa chỉ email').email('Email không hợp lệ'),
+    role: Yup.number().nullable().typeError('Giá trị phải là một số')
 });
 
-export const CreateStaff = ({ handleCreateStaff, resetFormik }: Props) => {
+export const CreateStaff = ({ handleCreateStaff, resetFormik, isOpen, onClose }: Props) => {
     const [isShowPassword, setIsShowPassword] = useState(false);
     const [statusAlert, setStatusAlert] = useState<{ message: string[] | unknown[], type: 'error' | 'success' } | null>();
 
@@ -58,7 +62,7 @@ export const CreateStaff = ({ handleCreateStaff, resetFormik }: Props) => {
             tel: '',
             address: '',
             email: '',
-            salary: ''
+            role: ''
         },
         validateOnMount: false,
         validateOnChange: false,
@@ -66,21 +70,6 @@ export const CreateStaff = ({ handleCreateStaff, resetFormik }: Props) => {
         validationSchema: validationSchemaRegister,
         onSubmit: async values => {
             handleCreateStaff(values)
-            // await api.post('/store', {
-            //     login_name: values.login_name,
-            //     name: values.name,
-            //     tel: values.tel,
-            //     address: values.address,
-            //     email: values.email,
-            //     password: values.password
-            // }).then((response) => {
-            //     setStatusAlert({ message: ['Đăng kí thành công'], type: 'success' });
-
-            // }).catch((error) => {
-            //     console.log(error)
-            //     setStatusAlert({ message: (error.response.data.errors ? Object.values(error.response.data.errors).flat() : error.response.data.message), type: 'error' });
-            // })
-
         }
     })
 
@@ -101,62 +90,53 @@ export const CreateStaff = ({ handleCreateStaff, resetFormik }: Props) => {
     }, [statusAlert])
 
     return (
-        <div css={container}>
-            {statusAlert && (
-                statusAlert.message.length > 0 && (
-                    <Alert type={statusAlert.type} message={statusAlert.message} />
-                )
-            )}
-            <div css={content}>
-                <h2>Thông tin đăng kí</h2>
-                {listFieldRegister.map((item, index) => {
-                    return (
-                        <div css={field} key={index}>
-                            <label htmlFor={item.name}>{item.label}</label>
-                            <TextField
-                                isFullWidth
-                                placeholder={item.placeholder}
-                                value={formik.values[item.name]}
-                                onChange={(text) => formik.setFieldValue(item.name, text.target.value)}
-                            />
-                            {formik.errors[item.name as keyof User] && <div style={{ color: 'red', fontSize: '13px' }}>{formik.errors[item.name as keyof User]}</div>}
-                        </div>
+        <Modal isOpen={isOpen} onClose={onClose} title='Thông tin đăng kí'>
+            <div css={container}>
+                {statusAlert && (
+                    statusAlert.message.length > 0 && (
+                        <Alert type={statusAlert.type} message={statusAlert.message} />
                     )
+                )}
+                <div css={content}>
+                    {listFieldRegister.map((item, index) => {
+                        return (
+                            <div css={field} key={index}>
+                                <label htmlFor={item.name}>{item.label}</label>
+                                <TextField
+                                    isFullWidth
+                                    placeholder={item.placeholder}
+                                    value={formik.values[item.name]}
+                                    type={item.name === 'password' ? (isShowPassword ? 'text' : 'password') : item.type}
+                                    onChange={(text) => formik.setFieldValue(item.name, text.target.value)}
+                                />
+                                {formik.errors[item.name as keyof User] && <div style={{ color: 'red', fontSize: '13px' }}>{formik.errors[item.name as keyof User]}</div>}
+                            </div>
+                        )
 
-                })}
+                    })}
 
-                <div>
-                    <input id='showPassword' type="checkbox" checked={isShowPassword} onChange={() => setIsShowPassword(!isShowPassword)} />
-                    <label htmlFor='showPassword'>Hiển thị mật khẩu</label>
+                    <div css={fieldCheckbox}>
+                        <input id='showPassword' type="checkbox" checked={isShowPassword} onChange={() => setIsShowPassword(!isShowPassword)} />
+                        <label htmlFor='showPassword'>Hiển thị mật khẩu</label>
+                    </div>
+
+                    <button
+                        css={submitBtn}
+                        onClick={() => formik.submitForm()}
+                    >
+                        Tạo nhân viên
+                    </button>
                 </div>
-
-                <button
-                    css={submitBtn}
-                    onClick={() => formik.submitForm()}
-                >
-                    Tạo nhân viên
-                </button>
             </div>
-        </div>
+        </Modal>
     )
 }
 
 const container = css`
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    justify-content: center;;
 `
 
 const content = css`
-    width: 100%;
-    display: flex;
-    padding: 30px;
-    max-width: 460px;
-    border-radius: 20px;
-    flex-direction: column;
-    justify-content: center;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    padding: 0px 20px;
 `
 
 const field = css`
@@ -171,6 +151,7 @@ const field = css`
 `
 
 const submitBtn = css`
+    width: 100%;
     margin-top: 10px;
     padding: 10px;
     border-radius: 5px;

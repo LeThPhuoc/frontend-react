@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { css } from "@emotion/react";
 import api from "../../config_api/axiosConfig";
 import { CreateStaff } from "./createStaff";
+import { useAlert } from "../../components/Alert/AlertProvider";
 
 type ListStaff = {
     id: number;
@@ -10,46 +11,48 @@ type ListStaff = {
     email: string;
     tel: string;
     login_name: string;
-    salary: string;
+    role: string;
     address: string;
 }
 
 export const Staff = () => {
-
+    const { showAlert } = useAlert()
     const [listStaff, setListStaff] = useState<ListStaff[]>([])
     const [isOpenCreateStaff, setIsOpenCreateStaff] = useState(false)
     const [isResetFormikRegister, setIsResetFormikRegister] = useState(false)
 
     const handleCreateStaff = async (payload: any) => {
         let data = null
-        if(payload) {
+        if (payload) {
             data = payload
             await api.post('/create_staff', {
-                    login_name: data.login_name,
-                    name: data.name,
-                    tel: data.tel,
-                    address: data.address,
-                    email: data.email,
-                    password: data.password,
-                    salary: data.salary
-                }).then((response) => {
-                    setIsResetFormikRegister(true)
-                }).catch((error) => {
-                    console.log(error)
-                    setIsResetFormikRegister(false)
+                login_name: data.login_name,
+                name: data.name,
+                tel: data.tel,
+                address: data.address,
+                email: data.email,
+                password: data.password,
+                role: data.role
+            }).then((response) => {
+                showAlert('Tạo mới nhân viên thành công', 'success')
+                setIsResetFormikRegister(true)
+            }).catch((error) => {
+                console.log(error)
+                showAlert(error.response.data.message[0] ?? '', 'error')
+                setIsResetFormikRegister(false)
 
-                })
+            })
         }
     }
 
-        useEffect(() => {
-            if (isResetFormikRegister) {
-                const timer = setTimeout(() => {
-                    setIsResetFormikRegister(!isResetFormikRegister);
-                }, 3000);
-                return () => clearTimeout(timer);
-            }
-        }, [isResetFormikRegister])
+    useEffect(() => {
+        if (isResetFormikRegister) {
+            const timer = setTimeout(() => {
+                setIsResetFormikRegister(!isResetFormikRegister);
+            }, 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [isResetFormikRegister])
 
     useEffect(() => {
         const getItems = async () => {
@@ -74,36 +77,40 @@ export const Staff = () => {
                     <button onClick={() => setIsOpenCreateStaff(!isOpenCreateStaff)}>Thêm nhân viên</button>
                 </div>
             </div>
-            {isOpenCreateStaff ? <CreateStaff resetFormik={isResetFormikRegister} handleCreateStaff={(payload) => handleCreateStaff(payload)} /> : (
-                <table css={listStaffStyle}>
-                    <thead>
-                        <tr>
-                            <td>Tên</td>
-                            <td>Tên đăng nhập</td>
-                            <td>Số điện thoại</td>
-                            <td>Email</td>
-                            <td>Lương</td>
-                            <td>Địa chỉ</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {listStaff.length !== 0 &&
-                            listStaff.map((staff) => {
-                                return (
-                                    <tr key={staff.id} css={itemStaffStyle}>
-                                        <td>{staff.name}</td>
-                                        <td>{staff.login_name}</td>
-                                        <td>{staff.tel}</td>
-                                        <td>{staff.email}</td>
-                                        <td>{staff.salary}</td>
-                                        <td>{staff.address}</td>
-                                    </tr>
-                                )
-                            })
-                        }
-                    </tbody>
-                </table>
-            )}
+            {isOpenCreateStaff && <CreateStaff
+                isOpen={isOpenCreateStaff}
+                onClose={() => setIsOpenCreateStaff(false)}
+                resetFormik={isResetFormikRegister}
+                handleCreateStaff={(payload) => handleCreateStaff(payload)}
+            />}
+            <table css={listStaffStyle}>
+                <thead>
+                    <tr>
+                        <td>Tên</td>
+                        <td>Tên đăng nhập</td>
+                        <td>Số điện thoại</td>
+                        <td>Email</td>
+                        <td>vị trí</td>
+                        <td>Địa chỉ</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {listStaff.length !== 0 &&
+                        listStaff.map((staff) => {
+                            return (
+                                <tr key={staff.id} css={itemStaffStyle}>
+                                    <td>{staff.name}</td>
+                                    <td>{staff.login_name}</td>
+                                    <td>{staff.tel}</td>
+                                    <td>{staff.email}</td>
+                                    <td>{staff.role}</td>
+                                    <td>{staff.address}</td>
+                                </tr>
+                            )
+                        })
+                    }
+                </tbody>
+            </table>
         </div>
     )
 }

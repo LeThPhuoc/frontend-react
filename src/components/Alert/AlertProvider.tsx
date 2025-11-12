@@ -77,6 +77,6 @@ width: calc(100vw - 32px);
     padding: 12px 24px;
     border-radius: 8px; 
     color: black;
-    z-index: 50;
+    z-index: 1000;
     transition: all .3s;
 `
