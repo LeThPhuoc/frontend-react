@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react"
-import { Boss, DataListProject, Staff } from "../../../api/project/getListProjectApi"
+import { BossProject, DataListProject, StaffProject } from "../../../api/project/getListProjectApi"
 import { ProjectPersoninfoCard } from "./projectPersonInfoCard"
 import { Modal } from "../../../components/modal/modal"
 import { flex, flexCol, gap } from "../../../style/style"
@@ -12,7 +12,7 @@ type Prop = {
 }
 
 export const ProjectItem = ({ item }: Prop) => {
-    const [showProjectPerson, setShowProjectPerson] = useState<Boss | Staff | null>(null)
+    const [showProjectPerson, setShowProjectPerson] = useState<BossProject | StaffProject | null>(null)
     return (
         <div css={project} >
             <div css={projectInfo}>
@@ -43,7 +43,7 @@ export const ProjectItem = ({ item }: Prop) => {
                     <div css={listProjectPerson}>
                         {item.staff.map((m) => {
                             return (
-                                <ProjectPersoninfoCard onClick={() => setShowProjectPerson({...m, user: 'staff'})} key={m.id} data={m} />
+                                <ProjectPersoninfoCard onClick={() => setShowProjectPerson({ ...m, user: 'staff' })} key={m.id} data={m} />
                             )
                         })}
                     </div>
@@ -53,7 +53,7 @@ export const ProjectItem = ({ item }: Prop) => {
                     <div css={listProjectPerson}>
                         {item.boss.map((m) => {
                             return (
-                                <ProjectPersoninfoCard onClick={() => setShowProjectPerson({...m, user: 'boss'})} key={m.id} data={m} />
+                                <ProjectPersoninfoCard onClick={() => setShowProjectPerson({ ...m, user: 'boss' })} key={m.id} data={m} />
                             )
                         })}
                     </div>
@@ -68,39 +68,34 @@ export const ProjectItem = ({ item }: Prop) => {
                         min-width: 300px;
                     `}
                 >
-                    <div css={[flex, flexCol, gap(5)]}>
-                        <div css={[flex, gap(5)]}>
+                    <div css={[flex, gap(10)]}>
+                        <div css={[]}>
                             <div>tên :</div>
-                            <div>{showProjectPerson.name}</div>
-                        </div>
-                        <div css={[flex, gap(5)]}>
                             <div>tên đăng nhập :</div>
-                            <div>{showProjectPerson.login_name}</div>
-                        </div>
-                        <div css={[flex, gap(5)]}>
                             <div>tel :</div>
-                            <div>{showProjectPerson.tel}</div>
-                        </div>
-                        <div css={[flex, gap(5)]}>
                             <div>email :</div>
-                            <div>{showProjectPerson.email}</div>
-                        </div>
-                        <div css={[flex, gap(5)]}>
                             <div>địa chỉ :</div>
-                            <div>{showProjectPerson.address}</div>
-                        </div>
-                        {showProjectPerson.user === 'staff' && (
-                            <>
-                                <div css={[flex, gap(5)]}>
-                                    <div>đảm nhiệm vị trí :</div>
-                                    <div>{showProjectPerson.role}</div>
-                                </div>
-                                <div css={[flex, gap(5)]}>
+                            {showProjectPerson.user === 'staff' && (
+                                <>
+                                    <div>vai trò :</div>
                                     <div>mức lương :</div>
+
+                                </>
+                            )}
+                        </div>
+                        <div css={[]}>
+                            <div>{showProjectPerson.name}</div>
+                            <div>{showProjectPerson.login_name}</div>
+                            <div>{showProjectPerson.tel}</div>
+                            <div>{showProjectPerson.email}</div>
+                            <div>{showProjectPerson.address}</div>
+                            {showProjectPerson.user === 'staff' && (
+                                <>
+                                    <div>{showProjectPerson.role}</div>
                                     <div>{showProjectPerson.salary}</div>
-                                </div>
-                            </>
-                        )}
+                                </>
+                            )}
+                        </div>
                     </div>
                 </Modal>
             )}

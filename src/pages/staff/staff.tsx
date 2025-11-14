@@ -3,65 +3,19 @@ import React, { useEffect, useState } from "react";
 import { css } from "@emotion/react";
 import api from "../../config_api/axiosConfig";
 import { CreateStaff } from "./createStaff";
-import { useAlert } from "../../components/Alert/AlertProvider";
-
-type ListStaff = {
-    id: number;
-    name: string;
-    email: string;
-    tel: string;
-    login_name: string;
-    address: string;
-}
+import { getListStaffApi, Staff as StaffType } from "../../api/staff/getListStaffApi";
 
 export const Staff = () => {
-    const { showAlert } = useAlert()
-    const [listStaff, setListStaff] = useState<ListStaff[]>([])
+    const [listStaff, setListStaff] = useState<StaffType[]>([])
     const [isOpenCreateStaff, setIsOpenCreateStaff] = useState(false)
-    const [isResetFormikRegister, setIsResetFormikRegister] = useState(false)
-
-    const handleCreateStaff = async (payload: any) => {
-        let data = null
-        if (payload) {
-            data = payload
-            await api.post('/create_staff', {
-                login_name: data.login_name,
-                name: data.name,
-                tel: data.tel,
-                address: data.address,
-                email: data.email,
-                password: data.password,
-            }).then((response) => {
-                showAlert('Tạo mới nhân viên thành công', 'success')
-                setIsResetFormikRegister(true)
-                setIsOpenCreateStaff(false)
-            }).catch((error) => {
-                console.log(error)
-                showAlert(error.response.data.message[0] ?? '', 'error')
-                setIsResetFormikRegister(false)
-
-            })
-        }
-    }
+    const [isReload, setIsReLoad] = useState(false)
 
     useEffect(() => {
-        if (isResetFormikRegister) {
-            const timer = setTimeout(() => {
-                setIsResetFormikRegister(!isResetFormikRegister);
-            }, 3000);
-            return () => clearTimeout(timer);
-        }
-    }, [isResetFormikRegister])
-
-    useEffect(() => {
-        const getItems = async () => {
-            await api.get('/get_list_staff').then((response) => {
-                setListStaff(response.data.staffs)
-            }).catch((error) => {
-                console.log(error);
+            getListStaffApi({
+                success: (data) => {
+                    setListStaff(data)
+                }
             })
-        }
-        getItems();
     }, [])
 
     return (
@@ -76,11 +30,11 @@ export const Staff = () => {
                     <button onClick={() => setIsOpenCreateStaff(!isOpenCreateStaff)}>Thêm nhân viên</button>
                 </div>
             </div>
-            {isOpenCreateStaff && <CreateStaff
-                isOpen={isOpenCreateStaff}
-                onClose={() => setIsOpenCreateStaff(false)}
-                handleCreateStaff={(payload) => handleCreateStaff(payload)}
-            />}
+            {isOpenCreateStaff &&
+                <CreateStaff
+                    isOpen={isOpenCreateStaff}
+                    onClose={() => setIsOpenCreateStaff(false)}
+                />}
             <table css={listStaffStyle}>
                 <thead>
                     <tr>

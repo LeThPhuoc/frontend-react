@@ -24,8 +24,9 @@ export const Modal = ({ children, isOpen, title, onClose, isHeader = true, custo
                         <button onClick={onClose}>X</button>
                     </div>
                 )}
-
-                {children}
+                <div css={childStyle}>
+                    {children}
+                </div>
             </div>
         </div>
     )
@@ -61,6 +62,12 @@ const content = css`
     border-radius: 20px;
     min-width: 500px;
     max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+`
+
+const childStyle = css`
+    overflow-y: auto;
 `
 
 const header = css`

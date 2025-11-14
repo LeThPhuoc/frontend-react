@@ -1,10 +1,10 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react"
-import { Boss, Staff } from "../../../api/project/getListProjectApi"
+import { BossProject, StaffProject } from "../../../api/project/getListProjectApi"
 
 type Prop = {
-    data: Boss | Staff
+    data: BossProject | StaffProject
     onClick: () => void
 }
 

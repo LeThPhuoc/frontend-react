@@ -6,9 +6,10 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { TextField } from '../../components/input/TextField';
 import { Modal } from '../../components/modal/modal';
+import { createStaffApi } from '../../api/staff/createStaffApi';
+import { useAlert } from '../../components/Alert/AlertProvider';
 
 type Props = {
-    handleCreateStaff: (payload: User) => void
     isOpen: boolean
     onClose: () => void
 }
@@ -43,12 +44,12 @@ const validationSchemaRegister = Yup.object({
     tel: Yup.string().required('Bạn chưa nhập số điện thoại').min(10, 'Số điện thoại tối thiểu 10 số').max(11, 'Số điện thoại tối đa 11 số'),
     address: Yup.string().required('Bạn chưa nhập địa chỉ'),
     email: Yup.string().required('Bạn chưa nhập địa chỉ email').email('Email không hợp lệ'),
-    role: Yup.string().nullable()
 });
 
-export const CreateStaff = ({ handleCreateStaff, isOpen, onClose }: Props) => {
+export const CreateStaff = ({ isOpen, onClose }: Props) => {
     const [isShowPassword, setIsShowPassword] = useState(false);
     const [statusAlert, setStatusAlert] = useState<{ message: string[] | unknown[], type: 'error' | 'success' } | null>();
+    const { showAlert } = useAlert()
 
     const formik = useFormik<User>({
         initialValues: {
@@ -64,7 +65,13 @@ export const CreateStaff = ({ handleCreateStaff, isOpen, onClose }: Props) => {
         validateOnBlur: false,
         validationSchema: validationSchemaRegister,
         onSubmit: async values => {
-            handleCreateStaff(values)
+            createStaffApi({data: values, success: (response) => {
+                showAlert('Tạo mới nhân viên thành công', 'success')
+                onClose && onClose()
+            }, failure: (error) => {
+                console.log(error)
+                showAlert(error.response.data.message[0] ?? '', 'error')
+            }})
         }
     })
 

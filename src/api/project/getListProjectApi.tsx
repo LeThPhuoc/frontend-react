@@ -26,11 +26,11 @@ export type DataListProject = {
     description: string,
     start_date?: string,
     end_date?: string
-    staff: Staff[]
-    boss: Boss[]
+    staff: StaffProject[]
+    boss: BossProject[]
 }
 
-export type Staff = {
+export type StaffProject = {
     id: number,
     name: string,
     tel: string,
@@ -42,7 +42,7 @@ export type Staff = {
     user: 'staff'
 }
 
-export type Boss = {
+export type BossProject = {
     id: number,
     name: string,
     tel: string,
