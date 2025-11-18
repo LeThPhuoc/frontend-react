@@ -21,3 +21,7 @@ export const justifyBetween = css`
 export const alignCenter = css`
     align-items: center;
 `
+
+export const flex1 = css`
+    flex: 1;
+`

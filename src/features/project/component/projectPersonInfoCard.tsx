@@ -14,7 +14,7 @@ type Prop = {
 
 export const ProjectPersoninfoCard = ({ data, onClick, onEdit, onDelete, isDelete, isEdit }: Prop) => {
     return (
-        <div css={content} onClick={onClick}>
+        <div css={[content, isDelete && css`background-color: #ffd3d3;`]} onClick={onClick}>
             <div>
                 <div css={fieldItem}>
                     <div className="title">Tên :</div>
@@ -31,14 +31,14 @@ export const ProjectPersoninfoCard = ({ data, onClick, onEdit, onDelete, isDelet
             </div>
             {isEdit && (
                 <div css={edit}>
-                    <div className="edit" onClick={(e) => {
+                    <button className="edit" onClick={(e) => {
                         onEdit && onEdit()
                         e.stopPropagation()
-                    }}>edit</div>
-                    <div className="delete" onClick={(e) => {
+                    }}>edit</button>
+                    <button className="delete" onClick={(e) => {
                         onDelete && onDelete()
                         e.stopPropagation()
-                    }}>delete</div>
+                    }}>{isDelete ? 'undelete' :'delete'}</button>
                 </div>
             )}
         </div>
@@ -72,16 +72,17 @@ const edit = css`
     display: flex;
     flex-direction: column;
     gap: 2px;
-    .edit {
+    button {
+        width: 100px;
         padding: 5px;
         border-radius: 5px;
-        text-align:center;
+        border: none;
+        cursor: pointer;
+    }
+    .edit {
         background-color: #b0e99a;
     }
     .delete {
-        padding: 5px;
-        border-radius: 5px;
-        text-align:center;
         background-color: #f7a8a8;
     }
 `

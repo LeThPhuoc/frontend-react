@@ -4,11 +4,12 @@ import { css } from "@emotion/react"
 import { TextField } from "../../components/input/TextField"
 import { useEffect, useState } from "react"
 import { BossProject, DataProject, getListProjectApi, StaffProject } from "../../api/project/getListProjectApi"
-import { flex, flexCol, gap } from "../../style/style"
+import { flex, flex1, flexCol, gap } from "../../style/style"
 import api from "../../config_api/axiosConfig"
 import { useParams } from "react-router-dom"
 import { ProjectPersoninfoCard } from "../../features/project/component/projectPersonInfoCard"
 import { ModalDetailStaffBoss } from "../../features/project/modal/modalDetailStaffBoss"
+import { DeleteStaffFromProjectApi } from "../../api/project/deleteStaffFromProjectApi"
 
 export const ProjectDetail = () => {
     const [project, setProject] = useState<DataProject | null>(null)
@@ -26,15 +27,11 @@ export const ProjectDetail = () => {
         get()
     }, [])
 
-    const handleDeleteStaffFromProject = (staffId: string|number[]) => {
-        api.post(`/project/${id}/delete_staff`, {
-            staff_id: staffId
-        }).then((res) => {
-            console.log(res.data)
-        })
+    const handleDeleteStaffFromProject = () => {
+        DeleteStaffFromProjectApi({idProject: id ?? '', data: listDeleteStaff.map((id) => ({id})), success: () => {
+            window.location.reload()
+        }})
     }
-
-    console.log(listDeleteStaff)
 
     return (
         <div css={container}>
@@ -70,9 +67,9 @@ export const ProjectDetail = () => {
                         {project?.staff.map((m) => {
                             const isDelete = listDeleteStaff.includes(m.id)
                             return (
-                                <ProjectPersoninfoCard 
-                                    key={m.id} data={m} 
-                                    onClick={() => setProjectPersonDetail({ ...m, user: 'staff' })} 
+                                <ProjectPersoninfoCard
+                                    key={m.id} data={m}
+                                    onClick={() => setProjectPersonDetail({ ...m, user: 'staff' })}
                                     onDelete={() => {
                                         if(listDeleteStaff.includes(m.id)) {
                                             setListDeleteStaff(listDeleteStaff.filter((id) => id !== m.id))
@@ -87,18 +84,23 @@ export const ProjectDetail = () => {
                             )
                         })}
                     </div>
-                    <button>
-                        thêm nhân viên
-                    </button>
+                    <div css={[flex]}>
+                        <button css={flex1}>
+                            thêm nhân viên
+                        </button>
+                        {listDeleteStaff.length > 0 && (
+                            <button css={flex1} onClick={handleDeleteStaffFromProject}>Xóa thành viên</button>
+                        )}
+                    </div>
                 </div>
                 <div css={bossStyle}>
                     <div className="title">người quản lí dự án</div>
                     <div css={listProjectPerson}>
                         {project?.boss.map((m) => {
                             return (
-                                <ProjectPersoninfoCard 
-                                    key={m.id} data={m} 
-                                    onClick={() => setProjectPersonDetail({ ...m, user: 'boss' })} 
+                                <ProjectPersoninfoCard
+                                    key={m.id} data={m}
+                                    onClick={() => setProjectPersonDetail({ ...m, user: 'boss' })}
                                 />
                             )
                         })}
@@ -109,10 +111,10 @@ export const ProjectDetail = () => {
                 </div>
             </div>
             {!!projectPersonDetail && (
-                <ModalDetailStaffBoss 
-                    isOpen={!!projectPersonDetail} 
-                    onClose={() => setProjectPersonDetail(null)} 
-                    data={projectPersonDetail} 
+                <ModalDetailStaffBoss
+                    isOpen={!!projectPersonDetail}
+                    onClose={() => setProjectPersonDetail(null)}
+                    data={projectPersonDetail}
                 />
             )}
         </div>
