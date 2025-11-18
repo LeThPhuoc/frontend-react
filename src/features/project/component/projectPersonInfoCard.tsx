@@ -8,9 +8,11 @@ type Prop = {
     onClick: () => void
     onEdit?: () => void
     onDelete?: () => void
+    isDelete?: boolean
+    isEdit?: boolean
 }
 
-export const ProjectPersoninfoCard = ({ data, onClick, onEdit, onDelete }: Prop) => {
+export const ProjectPersoninfoCard = ({ data, onClick, onEdit, onDelete, isDelete, isEdit }: Prop) => {
     return (
         <div css={content} onClick={onClick}>
             <div>
@@ -27,16 +29,18 @@ export const ProjectPersoninfoCard = ({ data, onClick, onEdit, onDelete }: Prop)
                     <div>{data.tel}</div>
                 </div>
             </div>
-            <div css={edit}>
-                <div className="edit" onClick={(e) => {
-                    onEdit && onEdit()
-                    e.stopPropagation()
-                }}>edit</div>
-                <div className="delete" onClick={(e) => {
-                    onDelete && onDelete()
-                    e.stopPropagation()
-                }}>delete</div>
-            </div>
+            {isEdit && (
+                <div css={edit}>
+                    <div className="edit" onClick={(e) => {
+                        onEdit && onEdit()
+                        e.stopPropagation()
+                    }}>edit</div>
+                    <div className="delete" onClick={(e) => {
+                        onDelete && onDelete()
+                        e.stopPropagation()
+                    }}>delete</div>
+                </div>
+            )}
         </div>
     )
 }
@@ -67,7 +71,7 @@ const edit = css`
 
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 2px;
     .edit {
         padding: 5px;
         border-radius: 5px;

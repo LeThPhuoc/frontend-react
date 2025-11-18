@@ -8,12 +8,12 @@ import { flex, flexCol, gap } from "../../style/style"
 import api from "../../config_api/axiosConfig"
 import { useParams } from "react-router-dom"
 import { ProjectPersoninfoCard } from "../../features/project/component/projectPersonInfoCard"
-import { Modal } from "../../components/modal/modal"
 import { ModalDetailStaffBoss } from "../../features/project/modal/modalDetailStaffBoss"
 
 export const ProjectDetail = () => {
     const [project, setProject] = useState<DataProject | null>(null)
     const [projectPersonDetail, setProjectPersonDetail] = useState<BossProject | StaffProject | null>(null)
+    const [listDeleteStaff, setListDeleteStaff] = useState<number[]>([])
     const { id } = useParams()
 
 
@@ -25,6 +25,16 @@ export const ProjectDetail = () => {
         }
         get()
     }, [])
+
+    const handleDeleteStaffFromProject = (staffId: string|number[]) => {
+        api.post(`/project/${id}/delete_staff`, {
+            staff_id: staffId
+        }).then((res) => {
+            console.log(res.data)
+        })
+    }
+
+    console.log(listDeleteStaff)
 
     return (
         <div css={container}>
@@ -58,10 +68,21 @@ export const ProjectDetail = () => {
                     <div className="title">nhân viên thuộc dự án</div>
                     <div css={listProjectPerson}>
                         {project?.staff.map((m) => {
+                            const isDelete = listDeleteStaff.includes(m.id)
                             return (
                                 <ProjectPersoninfoCard 
                                     key={m.id} data={m} 
                                     onClick={() => setProjectPersonDetail({ ...m, user: 'staff' })} 
+                                    onDelete={() => {
+                                        if(listDeleteStaff.includes(m.id)) {
+                                            setListDeleteStaff(listDeleteStaff.filter((id) => id !== m.id))
+                                            return
+                                        } else {
+                                            setListDeleteStaff([...listDeleteStaff, m.id])
+                                        }
+                                    }}
+                                    isDelete={isDelete}
+                                    isEdit
                                 />
                             )
                         })}
@@ -104,6 +125,7 @@ const container = css`
     display: flex;
     gap: 20px;
     flex-direction: column;
+    position: relative;
 `
 
 const projectInfo = css`
