@@ -1,7 +1,7 @@
 import api from "../../config_api/axiosConfig"
 
 type Props = {
-    success?: (data: DataListProject[]) => void,
+    success?: (data: DataProject[]) => void,
     failure?: (error: any) => void
 }
 
@@ -19,7 +19,7 @@ export const getListProjectApi = async ({ success, failure }: Props) => {
     }
 }
 
-export type DataListProject = {
+export type DataProject = {
     id: number,
     name: string,
     address: string,

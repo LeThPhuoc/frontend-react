@@ -9,6 +9,7 @@ import { Staff } from './pages/staff/staff';
 import { AuthThenticatedRoute } from './route/authThenticatedRoute';
 import { Project } from './pages/project/project';
 import { AlertProvider } from './components/Alert/AlertProvider';
+import { ProjectDetail } from './pages/project/projectDetail';
 
 function App() {
   const isAuthenticated = !!localStorage.getItem('token');
@@ -28,6 +29,7 @@ function App() {
               <Route element={<AuthThenticatedRoute isAuthenticated={(isAuthenticated || location.state)} />}>
                 <Route path="/staff" element={<Staff />} />
                 <Route path="/project" element={<Project />} />
+                <Route path="/project/:id/detail" element={<ProjectDetail />} />
               </Route>
             </Routes>
           </div>

@@ -13,3 +13,11 @@ export const gap = (index: number) => {
         gap: ${index}px;
     `
 }
+
+export const justifyBetween = css`
+    justify-content: space-between;
+`
+
+export const alignCenter = css`
+    align-items: center;
+`

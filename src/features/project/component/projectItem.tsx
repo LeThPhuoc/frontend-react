@@ -1,20 +1,21 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react"
-import { BossProject, DataListProject, StaffProject } from "../../../api/project/getListProjectApi"
+import { BossProject, DataProject, StaffProject } from "../../../api/project/getListProjectApi"
 import { ProjectPersoninfoCard } from "./projectPersonInfoCard"
 import { Modal } from "../../../components/modal/modal"
-import { flex, flexCol, gap } from "../../../style/style"
+import { flex, gap } from "../../../style/style"
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 
 type Prop = {
-    item: DataListProject
+    item: DataProject
 }
 
 export const ProjectItem = ({ item }: Prop) => {
-    const [showProjectPerson, setShowProjectPerson] = useState<BossProject | StaffProject | null>(null)
+    const navigate = useNavigate()
     return (
-        <div css={project} >
+        <div css={project} onClick={() => navigate(`/project/${item.id}/detail`)}>
             <div css={projectInfo}>
                 <div css={fieldItem}>
                     <div className="title">Tên dự án :</div>
@@ -37,7 +38,7 @@ export const ProjectItem = ({ item }: Prop) => {
                     <div>{item.end_date ?? 'sẽ cập nhập sớm'}</div>
                 </div>
             </div>
-            <div css={groupPeople}>
+            {/* <div css={groupPeople}>
                 <div css={staffStyle}>
                     <div className="title">nhân viên thuộc dự án</div>
                     <div css={listProjectPerson}>
@@ -58,8 +59,8 @@ export const ProjectItem = ({ item }: Prop) => {
                         })}
                     </div>
                 </div>
-            </div>
-            {!!showProjectPerson && (
+            </div> */}
+            {/* {!!showProjectPerson && (
                 <Modal
                     isOpen={!!showProjectPerson}
                     title="Thông tin"
@@ -98,10 +99,7 @@ export const ProjectItem = ({ item }: Prop) => {
                         </div>
                     </div>
                 </Modal>
-            )}
-            <div className="abc">
-                <div>fasdf</div>
-            </div>
+            )} */}
         </div>
     )
 }
@@ -113,79 +111,18 @@ const project = css`
     display: flex;
     justify-content: space-between;
     width: 100%;
-    min-height: 150px;
+    min-height: 200px;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 10px;
     box-shadow: 0px 0px 4px 0px #ccc;
     transition: all .3s ease-out;
-    .abc {
-        transition: all 8s ease-out;
-        position: absolute;
-        top: 20px;
-        right: 10px;
-        /* opacity: 0; */
-        display: none;
-        cursor: pointer;
-    }
-    :hover {
-        .abc {
-            /* opacity: 1; */
-            display: block;
-        }
-    }
     @media (max-width: ${maxWidth1150px}) {
         flex-direction: column;
         gap: 20px;
     }
 `
 
-const groupPeople = css`
-    display: flex;
-    @media (max-width: ${maxWidth1150px}) {
-        width: 100%;
-        justify-content: center;
-        border-top: 1px solid #ccc;
-    }
-`
-
-const listProjectPerson = css`
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-`
-
-const staffStyle = css`
-    padding: 0px 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    width: 250px;
-    height: 150px;
-    border-right: 1px solid #ccc;
-    .title {
-        text-align: center;
-    }
-    @media (max-width: ${maxWidth1150px}) {
-        width: 100%;
-    }
-`
-
-const bossStyle = css`
-    padding: 0px 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    width: 250px;
-    height: 150px;
-    .title {
-        text-align: center;
-    }
-    @media (max-width: ${maxWidth1150px}) {
-        width: 100%;
-    }
-`
 
 const projectInfo = css`
     display: flex;

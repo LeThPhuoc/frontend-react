@@ -4,13 +4,13 @@ import { css } from "@emotion/react"
 import { TextField } from "../../components/input/TextField"
 import { useEffect, useState } from "react"
 import { CreateProject } from "./createProject"
-import { DataListProject, getListProjectApi } from "../../api/project/getListProjectApi"
+import { DataProject, getListProjectApi } from "../../api/project/getListProjectApi"
 import { ProjectItem } from "../../features/project/component/projectItem"
 import { flex, flexCol, gap } from "../../style/style"
 
 export const Project = () => {
     const [isCreateProject, setIsCreateProject] = useState(false)
-    const [listProject, setListProject] = useState<DataListProject[]>([])
+    const [listProject, setListProject] = useState<DataProject[]>([])
 
     useEffect(() => {
         if (!isCreateProject) {
