@@ -7,11 +7,13 @@ type Props = {
     placeholder?: string
     size?: 'md' | 'sm' | 'lg'
     value: string | number
-    onChange: (value: ChangeEvent<HTMLInputElement>) => void
+    onChange?: (value: ChangeEvent<HTMLInputElement>) => void
     isFullWidth?: boolean
     type?: string
     errorText?: string
     label?: string
+    disabled?: boolean
+    emphasis?: boolean
 }
 
 const sizeCss = (size: 'md' | 'sm' | 'lg') => {
@@ -37,19 +39,32 @@ const sizeCss = (size: 'md' | 'sm' | 'lg') => {
     }
 }
 
-export const TextField = ({ placeholder, size = 'md', value, onChange, isFullWidth, type = 'text', errorText, label }: Props) => {
+export const TextField = (
+    {
+        emphasis,
+        placeholder,
+        size = 'md',
+        value,
+        onChange,
+        isFullWidth,
+        type = 'text',
+        errorText,
+        label,
+        disabled
+    }: Props) => {
     return (
         <div css={container}>
             {label && (
                 <label htmlFor="" css={labelStyle}>{label}</label>
             )}
             <input
-                css={[baseCss, (size && sizeCss(size)), isFullWidth && css`width: 100%;`]}
-                onChange={(e) => onChange(e)}
+                css={[baseCss(disabled, emphasis), (size && sizeCss(size)), isFullWidth && css`width: 100%;`]}
+                onChange={(e) => onChange && onChange(e)}
                 value={value}
                 placeholder={placeholder}
-                type={type} 
-                />
+                type={type}
+                disabled={disabled}
+            />
             {errorText && (
                 <span css={errorTextStyle}>{errorText}</span>
             )}
@@ -63,18 +78,20 @@ const container = css`
     gap: 5px;
 `
 
-const baseCss = css`
+const baseCss = (disabled?: boolean, emphasis?: boolean) => css`
     border-radius: 8px;
     min-width: 150px;
     color: #0E0E21;
     border: 1px solid #EAE9EE;
     box-shadow: 0px 1px 2px 0px #1018280D;
     transition: all .3s ease-out;
+    opacity: ${disabled ? 0.6 : 1};
+    background-color: ${disabled ? '' : emphasis ? '#edfaff' : ''};
     ::placeholder {
         color: #948D86;
     }
     :hover, :focus {
-        border: 1px solid #7399FF;
+        border: ${disabled ? '' : '1px solid #7399FF'};
     }
     :focus {
         box-shadow: 0px 0px 0px 4px #7399FF40;

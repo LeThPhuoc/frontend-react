@@ -5,6 +5,7 @@ import { css } from "@emotion/react"
 import { Modal } from "../../../components/modal/modal"
 import { flex, flexCol, gap } from "../../../style/style"
 import { BossProject, StaffProject } from "../../../api/project/getListProjectApi"
+import { TextField } from "../../../components/input/TextField"
 
 type Props = {
     isOpen: boolean,
@@ -23,49 +24,16 @@ export const ModalDetailStaffBoss = ({ data, isOpen, onClose }: Props) => {
             `}
         >
             <div css={[flex, gap(5), flexCol]}>
-                    <div css={fieldItem}>
-                        <div className="title">tên :</div>
-                        <div>{data?.name}</div>
-                    </div>
-                    <div css={fieldItem}>
-                        <div className="title">tên đăng nhập :</div>
-                        <div>{data?.login_name}</div>
-                    </div>
-                    <div css={fieldItem}>
-                        <div className="title">tel :</div>
-                        <div>{data?.tel}</div>
-                    </div>
-                    <div css={fieldItem}>
-                        <div className="title">email :</div>
-                        <div>{data?.email}</div>
-                    </div>
-                    <div css={fieldItem}>
-                        <div className="title">địa chỉ :</div>
-                        <div>{data?.address}</div>
-                    </div>
-                    {data?.user === 'staff' && (
-                        <>
-                            <div css={fieldItem}>
-                                <div className="title">vai trò :</div>
-                                <div>{data?.role}</div>
-                            </div>
-                            <div css={fieldItem}>
-                                <div className="title">mức lương :</div>
-                                <div>{data?.salary}</div>
-                            </div>
-                        </>
-                    )}
+                <TextField label="Tên :" value={data?.name ?? ''} disabled />
+                <TextField label="tên đăng nhập :" value={data?.login_name ?? ''} disabled />
+                <TextField label="tel :" value={data?.tel ?? ''} disabled />
+                <TextField label="email :" value={data?.email ?? ''} disabled />
+                <TextField label="địa chỉ :" value={data?.address ?? ''} disabled />
+                <TextField label="vai trò :" value={data?.role ?? ''} disabled />
+                {data?.user === 'staff' && (
+                    <TextField label="mức lương :" value={data?.salary ?? ''} disabled />
+                )}
             </div>
         </Modal>
     )
 }
-
-const fieldItem = css`
-    display: flex;
-    gap: 5px;
-    .title {
-        min-width: 120px;
-        font-size: 14px;
-        font-weight: 500;
-    }
-`

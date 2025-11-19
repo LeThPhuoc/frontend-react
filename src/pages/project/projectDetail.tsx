@@ -3,36 +3,51 @@
 import { css } from "@emotion/react"
 import { TextField } from "../../components/input/TextField"
 import { useEffect, useState } from "react"
-import { BossProject, DataProject, getListProjectApi, StaffProject } from "../../api/project/getListProjectApi"
+import { BossProject, DataProject, StaffProject } from "../../api/project/getListProjectApi"
 import { flex, flex1, flexCol, gap } from "../../style/style"
-import api from "../../config_api/axiosConfig"
 import { useParams } from "react-router-dom"
 import { ProjectPersoninfoCard } from "../../features/project/component/projectPersonInfoCard"
 import { ModalDetailStaffBoss } from "../../features/project/modal/modalDetailStaffBoss"
 import { DeleteStaffFromProjectApi } from "../../api/project/deleteStaffFromProjectApi"
 import { ModalEditStaffBoss } from "../../features/project/modal/modalEditStaffBoss"
+import { getDetailProjectApi } from "../../api/project/getDetailProjectApi"
+import { useAlert } from "../../components/Alert/AlertProvider"
 
 export const ProjectDetail = () => {
+    const {showAlert} = useAlert()
     const [project, setProject] = useState<DataProject | null>(null)
     const [projectPersonDetail, setProjectPersonDetail] = useState<BossProject | StaffProject | null>(null)
     const [listDeleteStaff, setListDeleteStaff] = useState<number[]>([])
     const [dataModalEditStaffBoss, setDataModalEditStaffBoss] = useState<BossProject | StaffProject | null>(null)
     const { id } = useParams()
 
+    const handleGetDetailProject = async () => {
+        await getDetailProjectApi({
+            project_id: id ?? '',
+            success: (data) => {
+                setProject(
+                    {
+                        ...data,
+                        staff: data.staff.map((itemStaff) => ({ ...itemStaff, project_id: data.id })),
+                        boss: data.boss.map((itemBoss) => ({ ...itemBoss, project_id: data.id })),
+                    }
+                )
+            }
+        })
+    }
+
 
     useEffect(() => {
-        const get = () => {
-            api.get(`/project/${id}/detail`).then((res) => {
-                setProject(res.data)
-            })
-        }
-        get()
+        handleGetDetailProject()
     }, [])
 
     const handleDeleteStaffFromProject = () => {
         DeleteStaffFromProjectApi({
-            idProject: id ?? '', data: listDeleteStaff.map((id) => ({ id })), success: () => {
-                window.location.reload()
+            idProject: id ?? '', data: listDeleteStaff.map((id) => ({ id })), 
+            success: () => {
+                handleGetDetailProject()
+                showAlert('Xóa nhân viên thành công', 'success')
+                setListDeleteStaff([])
             }
         })
     }
@@ -84,7 +99,7 @@ export const ProjectDetail = () => {
                                     }}
                                     isDelete={isDelete}
                                     isEdit
-                                    onEdit={() => setDataModalEditStaffBoss({...m, user: 'staff' })}
+                                    onEdit={() => setDataModalEditStaffBoss({ ...m, user: 'staff' })}
                                 />
                             )
                         })}
@@ -106,7 +121,7 @@ export const ProjectDetail = () => {
                                 <ProjectPersoninfoCard
                                     isEdit
                                     key={m.id} data={m}
-                                    onEdit={() => setDataModalEditStaffBoss({...m, user: 'boss' })}
+                                    onEdit={() => setDataModalEditStaffBoss({ ...m, user: 'boss' })}
                                     onClick={() => setProjectPersonDetail({ ...m, user: 'boss' })}
                                 />
                             )
@@ -125,10 +140,11 @@ export const ProjectDetail = () => {
                 />
             )}
             {!!dataModalEditStaffBoss && (
-                <ModalEditStaffBoss 
-                    data={dataModalEditStaffBoss} 
-                    isOpen={!!dataModalEditStaffBoss} 
+                <ModalEditStaffBoss
+                    data={dataModalEditStaffBoss}
+                    isOpen={!!dataModalEditStaffBoss}
                     onClose={() => setDataModalEditStaffBoss(null)}
+                    handleGetDetailProject={handleGetDetailProject}
                 />
             )}
         </div>

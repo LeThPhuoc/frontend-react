@@ -16,6 +16,9 @@ const typeCss = (type: 'primary' | 'secondary') => {
         case 'primary': {
             return css`
                 background-color: #CFDCFF;
+                :hover {
+                    background-color: #7399FF;
+                }
             `
         }
         case 'secondary': {

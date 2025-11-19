@@ -31,6 +31,7 @@ export type DataProject = {
 }
 
 export type StaffProject = {
+    project_id: number,
     id: number,
     name: string,
     tel: string,
@@ -43,11 +44,13 @@ export type StaffProject = {
 }
 
 export type BossProject = {
+    project_id: number,
     id: number,
     name: string,
     tel: string,
     address: string,
     login_name: string,
     email: string
-    user: 'boss'
+    user: 'boss',
+    role: string
 }

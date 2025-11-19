@@ -7,15 +7,18 @@ import { flex, flexCol, gap } from "../../../style/style"
 import { TextField } from "../../../components/input/TextField"
 import { useFormik } from "formik"
 import { Button } from "../../../components/Button/button"
+import { editStaffBossApi } from "../../../api/project/editStaffBossApi"
+import { useAlert } from "../../../components/Alert/AlertProvider"
 
 type Props = {
     isOpen: boolean
     onClose: () => void
     data: any
+    handleGetDetailProject?: () => void
 }
 
-export const ModalEditStaffBoss = ({ data, isOpen, onClose }: Props) => {
-
+export const ModalEditStaffBoss = ({ data, isOpen, onClose, handleGetDetailProject }: Props) => {
+    const { showAlert } = useAlert()
     const formik = useFormik<{
         role?: string,
         salary?: string
@@ -30,6 +33,20 @@ export const ModalEditStaffBoss = ({ data, isOpen, onClose }: Props) => {
         // validationSchema: ,
         onSubmit: async values => {
             console.log(values)
+            editStaffBossApi({
+                project_id: data?.project_id ?? '',
+                role: data?.user ?? '',
+                id: data?.id ?? '',
+                data: {
+                    role: values.role,
+                    salary: values.salary
+                },
+                success: () => {
+                    onClose()
+                    handleGetDetailProject && handleGetDetailProject()
+                    showAlert('Chỉnh sửa thành công', 'success')
+                },
+            })
         }
     })
 
@@ -38,51 +55,34 @@ export const ModalEditStaffBoss = ({ data, isOpen, onClose }: Props) => {
             isOpen={isOpen}
             onClose={onClose}
         >
-            <div css={[flex, gap(5), flexCol]}>
-                <div css={fieldItem}>
-                    <div className="title">tên :</div>
-                    <div>{data?.name}</div>
-                </div>
-                <div css={fieldItem}>
-                    <div className="title">tên đăng nhập :</div>
-                    <div>{data?.login_name}</div>
-                </div>
-                <div css={fieldItem}>
-                    <div className="title">tel :</div>
-                    <div>{data?.tel}</div>
-                </div>
-                <div css={fieldItem}>
-                    <div className="title">email :</div>
-                    <div>{data?.email}</div>
-                </div>
-                <div css={fieldItem}>
-                    <div className="title">địa chỉ :</div>
-                    <div>{data?.address}</div>
-                </div>
-                <div css={fieldItem}>
-                    <div className="title">vai trò :</div>
+            <div css={[flex, flexCol, gap(20)]}>
+                <div css={[flex, gap(5), flexCol]}>
+                    <TextField label="Tên :" value={data?.name ?? ''} disabled />
+                    <TextField label="tên đăng nhập :" value={data?.login_name ?? ''} disabled />
+                    <TextField label="tel :" value={data?.tel ?? ''} disabled />
+                    <TextField label="email :" value={data?.email ?? ''} disabled />
+                    <TextField label="địa chỉ :" value={data?.address ?? ''} disabled />
                     <TextField
+                        emphasis
+                        label="vai trò :"
                         value={formik.values?.role ?? ''}
                         onChange={(e) => formik.setFieldValue('role', e.target.value)}
                         placeholder="nhập vai trò mới"
                         isFullWidth
                     />
-                </div>
-                {data?.user === 'staff' && (
-
-                    <div css={fieldItem}>
-                        <div className="title">mức lương :</div>
+                    {data?.user === 'staff' && (
                         <TextField
+                            emphasis
+                            label="mức lương :"
                             value={formik.values?.salary ?? ''}
                             onChange={(e) => formik.setFieldValue('salary', e.target.value)}
                             placeholder="nhập mức lương mới"
                             isFullWidth
                         />
-                    </div>
-
-                )}
+                    )}
+                </div>
+                <Button size="m" isFullWidth onClick={() => formik.submitForm()}>Lưu thay đổi</Button>
             </div>
-            <Button size="m" isFullWidth onClick={() => formik.submitForm()}>Lưu thay đổi</Button>
         </Modal>
     )
 }
