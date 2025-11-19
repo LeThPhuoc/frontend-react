@@ -34,11 +34,15 @@ export const ProjectPersoninfoCard = ({ data, onClick, onEdit, onDelete, isDelet
                     <button className="edit" onClick={(e) => {
                         onEdit && onEdit()
                         e.stopPropagation()
-                    }}>edit</button>
+                    }}>
+                        <i className="fa-solid fa-pen"></i>
+                    </button>
                     <button className="delete" onClick={(e) => {
                         onDelete && onDelete()
                         e.stopPropagation()
-                    }}>{isDelete ? 'undelete' :'delete'}</button>
+                    }}>
+                        <i className="fa-solid fa-trash"></i>
+                    </button>
                 </div>
             )}
         </div>
@@ -73,16 +77,19 @@ const edit = css`
     flex-direction: column;
     gap: 2px;
     button {
-        width: 100px;
+        width: 30px;
+        height: 30px;
         padding: 5px;
         border-radius: 5px;
         border: none;
         cursor: pointer;
     }
     .edit {
+        color: white;
         background-color: #b0e99a;
     }
     .delete {
+        color: white;
         background-color: #f7a8a8;
     }
 `

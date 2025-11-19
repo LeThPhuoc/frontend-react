@@ -10,11 +10,13 @@ import { useParams } from "react-router-dom"
 import { ProjectPersoninfoCard } from "../../features/project/component/projectPersonInfoCard"
 import { ModalDetailStaffBoss } from "../../features/project/modal/modalDetailStaffBoss"
 import { DeleteStaffFromProjectApi } from "../../api/project/deleteStaffFromProjectApi"
+import { ModalEditStaffBoss } from "../../features/project/modal/modalEditStaffBoss"
 
 export const ProjectDetail = () => {
     const [project, setProject] = useState<DataProject | null>(null)
     const [projectPersonDetail, setProjectPersonDetail] = useState<BossProject | StaffProject | null>(null)
     const [listDeleteStaff, setListDeleteStaff] = useState<number[]>([])
+    const [dataModalEditStaffBoss, setDataModalEditStaffBoss] = useState<BossProject | StaffProject | null>(null)
     const { id } = useParams()
 
 
@@ -28,9 +30,11 @@ export const ProjectDetail = () => {
     }, [])
 
     const handleDeleteStaffFromProject = () => {
-        DeleteStaffFromProjectApi({idProject: id ?? '', data: listDeleteStaff.map((id) => ({id})), success: () => {
-            window.location.reload()
-        }})
+        DeleteStaffFromProjectApi({
+            idProject: id ?? '', data: listDeleteStaff.map((id) => ({ id })), success: () => {
+                window.location.reload()
+            }
+        })
     }
 
     return (
@@ -71,7 +75,7 @@ export const ProjectDetail = () => {
                                     key={m.id} data={m}
                                     onClick={() => setProjectPersonDetail({ ...m, user: 'staff' })}
                                     onDelete={() => {
-                                        if(listDeleteStaff.includes(m.id)) {
+                                        if (listDeleteStaff.includes(m.id)) {
                                             setListDeleteStaff(listDeleteStaff.filter((id) => id !== m.id))
                                             return
                                         } else {
@@ -80,6 +84,7 @@ export const ProjectDetail = () => {
                                     }}
                                     isDelete={isDelete}
                                     isEdit
+                                    onEdit={() => setDataModalEditStaffBoss({...m, user: 'staff' })}
                                 />
                             )
                         })}
@@ -99,7 +104,9 @@ export const ProjectDetail = () => {
                         {project?.boss.map((m) => {
                             return (
                                 <ProjectPersoninfoCard
+                                    isEdit
                                     key={m.id} data={m}
+                                    onEdit={() => setDataModalEditStaffBoss({...m, user: 'boss' })}
                                     onClick={() => setProjectPersonDetail({ ...m, user: 'boss' })}
                                 />
                             )
@@ -115,6 +122,13 @@ export const ProjectDetail = () => {
                     isOpen={!!projectPersonDetail}
                     onClose={() => setProjectPersonDetail(null)}
                     data={projectPersonDetail}
+                />
+            )}
+            {!!dataModalEditStaffBoss && (
+                <ModalEditStaffBoss 
+                    data={dataModalEditStaffBoss} 
+                    isOpen={!!dataModalEditStaffBoss} 
+                    onClose={() => setDataModalEditStaffBoss(null)}
                 />
             )}
         </div>
