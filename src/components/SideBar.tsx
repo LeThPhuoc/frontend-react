@@ -3,6 +3,7 @@
 import React, { use, useState } from "react";
 import { css } from "@emotion/react";
 import { useNavigate } from "react-router-dom";
+import { Button } from "./Button/button";
 
 const listRender = [
     {
@@ -50,15 +51,15 @@ export const SideBar = () => {
                     )
                 })}
             </ul>
-            <button
-                css={btnLogout}
+            <Button
+                isFullWidth
                 onClick={() => {
                     localStorage.removeItem('token')
                     navigate('/login')
                 }}
             >
                 Đăng xuất
-            </button>
+            </Button>
         </div>
     )
 }

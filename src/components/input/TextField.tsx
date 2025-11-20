@@ -14,6 +14,7 @@ type Props = {
     label?: string
     disabled?: boolean
     emphasis?: boolean
+    positionLabel?: 'top' | 'left'
 }
 
 const sizeCss = (size: 'md' | 'sm' | 'lg') => {
@@ -50,10 +51,12 @@ export const TextField = (
         type = 'text',
         errorText,
         label,
-        disabled
+        disabled,
+        positionLabel = 'top',
     }: Props) => {
     return (
-        <div css={container}>
+        <div css={[container, isFullWidth && css`width: 100%;`]}>
+            <div css={customPositionLabel(positionLabel)}>
             {label && (
                 <label htmlFor="" css={labelStyle}>{label}</label>
             )}
@@ -65,6 +68,7 @@ export const TextField = (
                 type={type}
                 disabled={disabled}
             />
+            </div>
             {errorText && (
                 <span css={errorTextStyle}>{errorText}</span>
             )}
@@ -106,4 +110,11 @@ const errorTextStyle = css`
 const labelStyle = css`
     font-size: 14px;
     font-weight: 500;
+`
+
+const customPositionLabel = (positionLabel: 'top' | 'left') => css`
+    display: flex;
+    flex-direction: ${positionLabel === 'top' ? 'column' : 'row'};
+    align-items: ${positionLabel === 'top' ? 'flex-start' : 'center'};
+    gap: 5px;
 `

@@ -20,14 +20,14 @@ export const getListProjectApi = async ({ success, failure }: Props) => {
 }
 
 export type DataProject = {
-    id: number,
+    id?: number,
     name: string,
     address: string,
     description: string,
     start_date?: string,
     end_date?: string
-    staff: StaffProject[]
-    boss: BossProject[]
+    staff?: StaffProject[]
+    boss?: BossProject[]
 }
 
 export type StaffProject = {

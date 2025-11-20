@@ -8,6 +8,7 @@ import { TextField } from '../../components/input/TextField';
 import { Modal } from '../../components/modal/modal';
 import { createStaffApi } from '../../api/staff/createStaffApi';
 import { useAlert } from '../../components/Alert/AlertProvider';
+import { Button } from '../../components/Button/button';
 
 type Props = {
     isOpen: boolean
@@ -110,12 +111,13 @@ export const CreateStaff = ({ isOpen, onClose }: Props) => {
                         <label htmlFor='showPassword'>Hiển thị mật khẩu</label>
                     </div>
 
-                    <button
+                    <Button
+                        isFullWidth
                         css={submitBtn}
                         onClick={() => formik.submitForm()}
                     >
                         Tạo nhân viên
-                    </button>
+                    </Button>
                 </div>
             </div>
         </Modal>

@@ -12,26 +12,63 @@ import { DeleteStaffFromProjectApi } from "../../api/project/deleteStaffFromProj
 import { ModalEditStaffBoss } from "../../features/project/modal/modalEditStaffBoss"
 import { getDetailProjectApi } from "../../api/project/getDetailProjectApi"
 import { useAlert } from "../../components/Alert/AlertProvider"
+import { Button } from "../../components/Button/button"
+import { useFormik } from "formik"
+import { editProjectApi } from "../../api/project/editProjectApi"
 
 export const ProjectDetail = () => {
-    const {showAlert} = useAlert()
-    const [project, setProject] = useState<DataProject | null>(null)
+    const { showAlert } = useAlert()
+    const [projectDefault, setProjectDefault] = useState<DataProject | null>(null)
     const [projectPersonDetail, setProjectPersonDetail] = useState<BossProject | StaffProject | null>(null)
     const [listDeleteStaff, setListDeleteStaff] = useState<number[]>([])
     const [dataModalEditStaffBoss, setDataModalEditStaffBoss] = useState<BossProject | StaffProject | null>(null)
     const { id } = useParams()
 
+    const formik = useFormik<DataProject>({
+        initialValues: {
+            id: undefined,
+            name: '',
+            description: '',
+            address: '',
+            start_date: '',
+            end_date: '',
+            staff: [],
+            boss: []
+        },
+        validateOnMount: false,
+        validateOnChange: false,
+        validateOnBlur: false,
+        // validationSchema: ,
+        onSubmit: async values => {
+            editProjectApi({
+                project_id: id ?? '',
+                data: values,
+                success: () => {
+                    showAlert('Chỉnh sửa dự án thành công', 'success')
+                    handleGetDetailProject()
+                },
+                failure: (error) => {
+                    showAlert(error.response.data.message, 'error')
+                }
+            })
+        }
+    })
+
     const handleGetDetailProject = async () => {
         await getDetailProjectApi({
             project_id: id ?? '',
             success: (data) => {
-                setProject(
-                    {
-                        ...data,
-                        staff: data.staff.map((itemStaff) => ({ ...itemStaff, project_id: data.id })),
-                        boss: data.boss.map((itemBoss) => ({ ...itemBoss, project_id: data.id })),
-                    }
-                )
+                setProjectDefault(data)
+                formik.setValues({
+                    id: Number(data.id),
+                    name: data.name,
+                    description: data.description,
+                    address: data.address,
+                    start_date: data.start_date ?? '',
+                    end_date: data.end_date ?? '',
+                    staff: (data.staff ?? []).map((m) => ({ ...m, project_id: Number(data.id) })),
+                    boss: (data.boss ?? []).map((m) => ({ ...m, project_id: Number(data.id) }))
+                })
             }
         })
     }
@@ -43,7 +80,7 @@ export const ProjectDetail = () => {
 
     const handleDeleteStaffFromProject = () => {
         DeleteStaffFromProjectApi({
-            idProject: id ?? '', data: listDeleteStaff.map((id) => ({ id })), 
+            idProject: id ?? '', data: listDeleteStaff.map((id) => ({ id })),
             success: () => {
                 handleGetDetailProject()
                 showAlert('Xóa nhân viên thành công', 'success')
@@ -52,38 +89,88 @@ export const ProjectDetail = () => {
         })
     }
 
+    const handleResetForm = () => {
+        if (projectDefault) {
+            formik.setValues({
+                address: projectDefault.address,
+                name: projectDefault.name,
+                description: projectDefault.description,
+                start_date: projectDefault.start_date ?? '',
+                end_date: projectDefault.end_date ?? '',
+                staff: projectDefault.staff,
+                boss: projectDefault.boss,
+                id: Number(projectDefault.id)
+            })
+        }
+    }
+
     return (
         <div css={container}>
-            <button css={editBtn}>
-                chỉnh sửa dự án
-            </button>
+            <h1 css={css`
+                text-align: center;
+                font-size: 24px;
+            `}>Thông tin dự án</h1>
             <div css={projectInfo}>
-                <div css={fieldItem}>
-                    <div className="title">Tên dự án :</div>
-                    <div>{project?.name}</div>
-                </div>
-                <div css={fieldItem}>
-                    <div className="title">Mô tả của dự án :</div>
-                    <div>{project?.description}</div>
-                </div>
-                <div css={fieldItem}>
-                    <div className="title">Địa chỉ :</div>
-                    <div>{project?.address}</div>
-                </div>
-                <div css={fieldItem}>
-                    <div className="title">Ngày bắt đầu :</div>
-                    <div>{project?.start_date ?? 'sẽ cập nhập sớm'}</div>
-                </div>
-                <div css={fieldItem}>
-                    <div className="title">Ngày kết thúc :</div>
-                    <div>{project?.end_date ?? 'sẽ cập nhập sớm'}</div>
-                </div>
+                <TextField
+                    label="Tên dự án :"
+                    value={formik.values.name ?? ''}
+                    isFullWidth
+                    onChange={(e) => {
+                        formik.setFieldValue('name', e.target.value)
+                    }}
+                />
+                <TextField
+                    label="Mô tả của dự án :"
+                    value={formik.values.description ?? ''}
+                    isFullWidth
+                    onChange={(e) => {
+                        formik.setFieldValue('description', e.target.value)
+                    }}
+                />
+                <TextField
+                    label="Địa chỉ :"
+                    value={formik.values.address ?? ''}
+                    isFullWidth
+                    onChange={(e) => {
+                        formik.setFieldValue('address', e.target.value)
+                    }}
+                />
+                <TextField
+                    label="Ngày bắt đầu :"
+                    value={formik.values.start_date ?? ''}
+                    isFullWidth
+                    type="date"
+                    onChange={(e) => {
+                        formik.setFieldValue('start_date', e.target.value)
+                    }}
+                />
+                <TextField
+                    label="Ngày kết thúc :"
+                    value={formik.values.end_date ?? ''}
+                    isFullWidth
+                    type="date"
+                    onChange={(e) => {
+                        formik.setFieldValue('end_date', e.target.value)
+                    }}
+                />
+                <Button
+                    isFullWidth
+                    onClick={handleResetForm}
+                    customCss={css`
+                        margin-top: 10px;
+                    `}
+                >
+                    Quay về trạng thái ban đầu
+                </Button>
+                <Button isFullWidth onClick={() => formik.submitForm()}>
+                    chỉnh sửa dự án
+                </Button>
             </div>
             <div css={groupPeople}>
                 <div css={staffStyle}>
                     <div className="title">nhân viên thuộc dự án</div>
                     <div css={listProjectPerson}>
-                        {project?.staff.map((m) => {
+                        {(formik.values.staff ?? []).map((m) => {
                             const isDelete = listDeleteStaff.includes(m.id)
                             return (
                                 <ProjectPersoninfoCard
@@ -104,19 +191,29 @@ export const ProjectDetail = () => {
                             )
                         })}
                     </div>
-                    <div css={[flex]}>
-                        <button css={flex1}>
-                            thêm nhân viên
-                        </button>
+                    <div css={[flex, gap(5)]}>
+                        <div css={flex1}>
+                            <Button isFullWidth>
+                                thêm nhân viên
+                            </Button>
+                        </div>
                         {listDeleteStaff.length > 0 && (
-                            <button css={flex1} onClick={handleDeleteStaffFromProject}>Xóa thành viên</button>
+                            <div css={flex1}>
+                                <Button
+                                    isFullWidth
+                                    onClick={handleDeleteStaffFromProject}
+                                    type="delete"
+                                >
+                                    Xóa thành viên
+                                </Button>
+                            </div>
                         )}
                     </div>
                 </div>
                 <div css={bossStyle}>
                     <div className="title">người quản lí dự án</div>
                     <div css={listProjectPerson}>
-                        {project?.boss.map((m) => {
+                        {(formik.values.boss ?? []).map((m) => {
                             return (
                                 <ProjectPersoninfoCard
                                     isEdit
@@ -127,9 +224,9 @@ export const ProjectDetail = () => {
                             )
                         })}
                     </div>
-                    <button>
+                    <Button isFullWidth>
                         thêm quản lí
-                    </button>
+                    </Button>
                 </div>
             </div>
             {!!projectPersonDetail && (
@@ -163,7 +260,7 @@ const container = css`
 const projectInfo = css`
     display: flex;
     flex-shrink: 0;
-    width: 350px;
+    /* width: 350px; */
     flex-direction: column;
     justify-content: center;
     gap: 5px;
@@ -218,7 +315,6 @@ const bossStyle = css`
 `
 
 const editBtn = css`
-    position: absolute;
     top: 20px;
     right: 20px;
     background-color: #b0e99a;

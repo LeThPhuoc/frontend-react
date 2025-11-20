@@ -7,6 +7,7 @@ import { CreateProject } from "./createProject"
 import { DataProject, getListProjectApi } from "../../api/project/getListProjectApi"
 import { ProjectItem } from "../../features/project/component/projectItem"
 import { flex, flexCol, gap } from "../../style/style"
+import { Button } from "../../components/Button/button"
 
 export const Project = () => {
     const [isCreateProject, setIsCreateProject] = useState(false)
@@ -31,7 +32,7 @@ export const Project = () => {
                 <div css={headerTool}>
                     <label htmlFor="">tìm kiếm</label>
                     <TextField onChange={(e) => console.log(e.target.value)} value={''} />
-                    <button onClick={() => setIsCreateProject(!isCreateProject)}>tạo mơi dự án</button>
+                    <Button onClick={() => setIsCreateProject(!isCreateProject)}>tạo mơi dự án</Button>
                 </div>
             </div>
             {isCreateProject && (

@@ -6,6 +6,7 @@ import * as Yup from 'yup'
 import { useAlert } from "../../components/Alert/AlertProvider";
 import { createProjectApi, DataCreateProject } from "../../api/project/createProjectApi";
 import { Modal } from "../../components/modal/modal";
+import { Button } from "../../components/Button/button";
 
 const validationSchema = Yup.object({
     name: Yup.string().required('Bạn chưa nhập tên dự án'),
@@ -85,7 +86,7 @@ export const CreateProject = ({ isOpen, onClose }: Props) => {
                     value={formik.values.end_date ?? ''}
                     onChange={(e) => formik.setFieldValue('end_date', e.target.value)}
                 />
-                <button onClick={() => formik.submitForm()}>tạo mới</button>
+                <Button isFullWidth onClick={() => formik.submitForm()}>tạo mới</Button>
             </div>
         </Modal>
     )

@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 
-import { css } from "@emotion/react"
+import { css, SerializedStyles } from "@emotion/react"
 
 type Props = {
     size?: 'm' | 's' | 'l'
@@ -8,10 +8,13 @@ type Props = {
     children: React.ReactNode
     onClick?: () => void
     disabled?: boolean
-    type?: 'primary' | 'secondary'
+    type?: TypeButton
+    customCss?: SerializedStyles | SerializedStyles[]
 }
 
-const typeCss = (type: 'primary' | 'secondary') => {
+type TypeButton = 'primary' | 'secondary' | 'delete';
+
+const typeCss = (type: TypeButton) => {
     switch (type) {
         case 'primary': {
             return css`
@@ -30,7 +33,14 @@ const typeCss = (type: 'primary' | 'secondary') => {
                 }
             `
         }
-}
+        case 'delete': {
+            return css`
+                background-color: #FFD4D4;
+                :hover {
+                    background-color: #FF6A6A;
+                }
+            `}
+    }
 }
 
 const sizeCss = (size: 'm' | 's' | 'l') => {
@@ -56,9 +66,19 @@ const sizeCss = (size: 'm' | 's' | 'l') => {
     }
 }
 
-export const Button = ({ size = 'm', isFullWidth, children, onClick, disabled, type = 'primary' }: Props) => {
+export const Button = (
+    { 
+        size = 'm', 
+        isFullWidth, 
+        children, 
+        onClick, 
+        disabled, 
+        type = 'primary', 
+        customCss 
+    }: Props
+) => {
     return (
-        <button css={[baseCss(disabled, isFullWidth), sizeCss(size), typeCss(type)]} onClick={onClick}>
+        <button css={[customCss, baseCss(disabled, isFullWidth), sizeCss(size), typeCss(type)]} onClick={onClick}>
             {children}
         </button>
     )
@@ -66,11 +86,11 @@ export const Button = ({ size = 'm', isFullWidth, children, onClick, disabled, t
 
 
 const baseCss = (disable?: boolean, isFullwidth?: boolean) => css`
-    width: ${isFullwidth ? '100%' :'fit-content'};
+    width: ${isFullwidth ? '100%' : 'fit-content'};
     border-radius: 50px;
     color: #0E0E21;
     transition: all .3s ease-out;
     color: ${disable ? '#948D86' : ''};
     opacity: ${disable ? 0.6 : 1};
-    cursor: ${disable ? 'not-allowed': 'pointer'};
+    cursor: ${disable ? 'not-allowed' : 'pointer'};
 `

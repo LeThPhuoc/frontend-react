@@ -4,6 +4,8 @@ import { css } from "@emotion/react";
 import api from "../../config_api/axiosConfig";
 import { CreateStaff } from "./createStaff";
 import { getListStaffApi, Staff as StaffType } from "../../api/staff/getListStaffApi";
+import { Button } from "../../components/Button/button";
+import { TextField } from "../../components/input/TextField";
 
 export const Staff = () => {
     const [listStaff, setListStaff] = useState<StaffType[]>([])
@@ -23,11 +25,12 @@ export const Staff = () => {
             <div css={header}>
                 <h3>Danh sách nhân viên</h3>
                 <div css={toolbar}>
-                    <div css={findTool}>
-                        <label htmlFor="">Tìm kiếm nhân viên</label>
-                        <input type="text" placeholder="Nhập để tìm kiếm..." />
-                    </div>
-                    <button onClick={() => setIsOpenCreateStaff(!isOpenCreateStaff)}>Thêm nhân viên</button>
+                    <TextField
+                        positionLabel="left"
+                        label="Tìm kiếm" 
+                        value=''
+                    />
+                    <Button onClick={() => setIsOpenCreateStaff(!isOpenCreateStaff)}>Thêm nhân viên</Button>
                 </div>
             </div>
             {isOpenCreateStaff &&
@@ -78,6 +81,7 @@ const header = css`
 
 const toolbar = css`
     display: flex;
+    align-items: center;
     gap: 10px;
 `
 
