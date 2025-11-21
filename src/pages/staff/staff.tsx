@@ -79,6 +79,7 @@ const container = css`
 
 const header = css`
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
 `
@@ -87,21 +88,6 @@ const toolbar = css`
     display: flex;
     align-items: center;
     gap: 10px;
-`
-
-const findTool = css`
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    label {
-        font-weight: 500;
-        font-size: 18px;
-    }
-    input {
-        outline: none;
-        font-size: 14px;
-        padding: 6px 10px;
-    }
 `
 
 const listStaffStyle = css`

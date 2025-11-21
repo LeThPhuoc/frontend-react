@@ -8,6 +8,8 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { loginSuccess } from '../../features/redux/authSlide'
 import { useAlert } from '../../components/Alert/AlertProvider';
+import { Button } from '../../components/Button/button';
+import { TextField } from '../../components/input/TextField';
 
 const listFieldRegister: {
     label: string,
@@ -21,7 +23,6 @@ const listFieldRegister: {
         { label: 'Địa chỉ', name: 'address', type: 'text', placeholder: 'Địa chỉ' },
         { label: 'Email', name: 'email', type: 'text', placeholder: 'Email' },
         { label: 'Mật khẩu', name: 'password', type: 'password', placeholder: 'Mật khẩu' },
-        { label: 'Quản trị viên', name: 'is_admin', type: 'checkbox', placeholder: 'Quản trị viên' },
     ]
 
 const listFieldLogin: {
@@ -137,18 +138,16 @@ export const LoginOrRegister = () => {
                 <h2>{formType === 'login' ? 'Thông tin đăng nhập' : 'Thông tin đăng kí'}</h2>
                 {(formType === 'login' ? listFieldLogin : listFieldRegister).map((item, index) => {
                     return (
-                        <div css={item.name === 'is_admin' ? fieldCheckbox : field} key={index}>
-                            <label htmlFor={item.name}>{item.label}</label>
-                            <input
-                                id={item.name}
-                                css={fieldInput}
-                                type={item.name === 'is_admin' ? 'checkbox' : (item.name === 'password' ? (isShowPassword ? "text" : "password") : item.type)}
-                                placeholder={item.placeholder}
-                                value={formik.values[item.name as keyof Formik]}
-                                onChange={(e) => formik.setFieldValue(item.name, item.name !== 'is_admin' ? e.target.value : e.target.checked ? '1' : '0')}
-                            />
-                            {formik.errors[item.name as keyof Formik] && <div style={{ color: 'red', fontSize: '13px' }}>{formik.errors[item.name as keyof Formik]}</div>}
-                        </div>
+                        <TextField
+                            key={index}
+                            isFullWidth
+                            label={item.label}
+                            placeholder={item.placeholder}
+                            value={formik.values[item.name as keyof Formik]}
+                            type={item.name === 'password' ? (isShowPassword ? "text" : "password") : item.type}
+                            onChange={(e) => formik.setFieldValue(item.name, e.target.value)}
+                            errorText={formik.errors[item.name as keyof Formik]}
+                        />
                     )
 
                 })}
@@ -158,12 +157,15 @@ export const LoginOrRegister = () => {
                     <label htmlFor='showPassword'>Hiển thị mật khẩu</label>
                 </div>
 
-                <button
-                    css={submitBtn}
+                <Button
+                    isFullWidth
+                    customCss={css`
+                        margin-top: 10px;
+                    `}
                     onClick={() => formik.submitForm()}
                 >
                     {formType === 'register' ? 'Đăng ký' : 'Đăng nhập'}
-                </button>
+                </Button>
 
                 <div>
                     {formType === 'login' ? 'Bạn chưa có tài khoản?' : 'Bạn đã có tài khoản?'}
@@ -195,6 +197,7 @@ const content = css`
     border-radius: 20px;
     flex-direction: column;
     justify-content: center;
+    gap: 10px;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
 `
 

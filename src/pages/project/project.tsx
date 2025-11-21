@@ -9,23 +9,34 @@ import { ProjectItem } from "../../features/project/component/projectItem"
 import { flex, flexCol, gap } from "../../style/style"
 import { Button } from "../../components/Button/button"
 import { useDebounce } from "../../components/useDebounce"
+import { useNavigate } from "react-router-dom"
+import { deleteProjectApi } from "../../api/project/deleteProjectApi"
 
 export const Project = () => {
+    const naviage = useNavigate()
     const [isCreateProject, setIsCreateProject] = useState(false)
     const [listProject, setListProject] = useState<DataProject[]>([])
     const [searchTerm, setSearchTerm] = useState('')
     const debouncedValue = useDebounce(searchTerm)
 
     useEffect(() => {
-        // if (!isCreateProject) {
-            getListProjectApi({
-                searchTerm: debouncedValue,
-                success: (data) => {
-                    setListProject(data ?? [])
-                }
-            })
-        // }
-    }, [debouncedValue])
+        getListProjectApi({
+            searchTerm: debouncedValue,
+            success: (data) => {
+                setListProject(data ?? [])
+            }
+        })
+    }, [debouncedValue, isCreateProject])
+
+    const handleEditProject = (id: number) => {
+        naviage(`/project/${id}/detail`)
+    }
+
+    const handleDeleteProject = (id: number) => {
+        deleteProjectApi({
+            project_id: id,
+        })
+    }
 
     return (
         <div css={container}>
@@ -45,7 +56,12 @@ export const Project = () => {
             <div css={[flex, flexCol, gap(10)]}>
                 {listProject.map((item) => {
                     return (
-                        <ProjectItem item={item} key={item.id} />
+                        <ProjectItem
+                            onEdit={(id) => handleEditProject(id)}
+                            onDelete={(id) => handleDeleteProject(id)}
+                            item={item}
+                            key={item.id}
+                        />
                     )
                 })}
             </div>
@@ -65,6 +81,7 @@ const header = css`
     display: flex;
     align-items: center;
     justify-content: space-between;
+    flex-wrap: wrap-reverse;
 `
 
 const headerTool = css`

@@ -20,7 +20,7 @@ export const ProjectDetail = () => {
     const { showAlert } = useAlert()
     const [projectDefault, setProjectDefault] = useState<DataProject | null>(null)
     const [projectPersonDetail, setProjectPersonDetail] = useState<BossProject | StaffProject | null>(null)
-    const [listDeleteStaff, setListDeleteStaff] = useState<number[]>([])
+    const [listDeleteStaffBoss, setListDeleteStaffBoss] = useState<{staff_id: number[], boss_id: number[]}>({staff_id: [], boss_id: []})
     const [dataModalEditStaffBoss, setDataModalEditStaffBoss] = useState<BossProject | StaffProject | null>(null)
     const { id } = useParams()
 
@@ -78,13 +78,15 @@ export const ProjectDetail = () => {
         handleGetDetailProject()
     }, [])
 
-    const handleDeleteStaffFromProject = () => {
+    const handleDeleteStaffBossFromProject = () => {
         DeleteStaffFromProjectApi({
-            idProject: id ?? '', data: listDeleteStaff.map((id) => ({ id })),
+            idProject: id ?? '', 
+            dataListStaffId: listDeleteStaffBoss.staff_id.map((id) => ({ id })),
+            dataListBossId: listDeleteStaffBoss.boss_id.map((id) => ({ id })),
             success: () => {
                 handleGetDetailProject()
                 showAlert('Xóa nhân viên thành công', 'success')
-                setListDeleteStaff([])
+                setListDeleteStaffBoss({staff_id: [], boss_id: []})
             }
         })
     }
@@ -171,17 +173,23 @@ export const ProjectDetail = () => {
                     <div className="title">nhân viên thuộc dự án</div>
                     <div css={listProjectPerson}>
                         {(formik.values.staff ?? []).map((m) => {
-                            const isDelete = listDeleteStaff.includes(m.id)
+                            const isDelete = listDeleteStaffBoss.staff_id.includes(m.id)
                             return (
                                 <ProjectPersoninfoCard
                                     key={m.id} data={m}
                                     onClick={() => setProjectPersonDetail({ ...m, user: 'staff' })}
                                     onDelete={() => {
-                                        if (listDeleteStaff.includes(m.id)) {
-                                            setListDeleteStaff(listDeleteStaff.filter((id) => id !== m.id))
+                                        if (listDeleteStaffBoss.staff_id.includes(m.id)) {
+                                            setListDeleteStaffBoss({
+                                                staff_id: listDeleteStaffBoss.staff_id.filter((id) => id !== m.id), 
+                                                boss_id: listDeleteStaffBoss.boss_id
+                                            })
                                             return
                                         } else {
-                                            setListDeleteStaff([...listDeleteStaff, m.id])
+                                            setListDeleteStaffBoss({
+                                                staff_id: [...listDeleteStaffBoss.staff_id, m.id], 
+                                                boss_id: listDeleteStaffBoss.boss_id
+                                            })
                                         }
                                     }}
                                     isDelete={isDelete}
@@ -197,11 +205,11 @@ export const ProjectDetail = () => {
                                 thêm nhân viên
                             </Button>
                         </div>
-                        {listDeleteStaff.length > 0 && (
+                        {listDeleteStaffBoss.staff_id.length > 0 && (
                             <div css={flex1}>
                                 <Button
                                     isFullWidth
-                                    onClick={handleDeleteStaffFromProject}
+                                    onClick={handleDeleteStaffBossFromProject}
                                     type="delete"
                                 >
                                     Xóa thành viên
@@ -214,19 +222,50 @@ export const ProjectDetail = () => {
                     <div className="title">người quản lí dự án</div>
                     <div css={listProjectPerson}>
                         {(formik.values.boss ?? []).map((m) => {
+                            const isDelete = listDeleteStaffBoss.boss_id.includes(m.id)
                             return (
                                 <ProjectPersoninfoCard
                                     isEdit
                                     key={m.id} data={m}
                                     onEdit={() => setDataModalEditStaffBoss({ ...m, user: 'boss' })}
                                     onClick={() => setProjectPersonDetail({ ...m, user: 'boss' })}
+                                    onDelete={() => {
+                                        if (listDeleteStaffBoss.boss_id.includes(m.id)) {
+                                            setListDeleteStaffBoss({
+                                                staff_id: listDeleteStaffBoss.staff_id, 
+                                                boss_id: listDeleteStaffBoss.boss_id.filter((id) => id !== m.id)
+                                            })
+                                            return
+                                        } else {
+                                            setListDeleteStaffBoss({
+                                                staff_id: listDeleteStaffBoss.staff_id, 
+                                                boss_id: [...listDeleteStaffBoss.boss_id, m.id]
+                                            })
+                                        }
+                                    }}
+                                    isDelete={isDelete}
                                 />
                             )
                         })}
                     </div>
-                    <Button isFullWidth>
-                        thêm quản lí
-                    </Button>
+                    <div css={[flex, gap(5)]}>
+                        <div css={flex1}>
+                            <Button isFullWidth>
+                                thêm quản lí
+                            </Button>
+                        </div>
+                        {listDeleteStaffBoss.boss_id.length > 0 && (
+                            <div css={flex1}>
+                                <Button
+                                    isFullWidth
+                                    onClick={handleDeleteStaffBossFromProject}
+                                    type="delete"
+                                >
+                                    Xóa quản lí
+                                </Button>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
             {!!projectPersonDetail && (

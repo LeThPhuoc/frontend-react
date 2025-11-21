@@ -1,21 +1,17 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react"
-import { BossProject, DataProject, StaffProject } from "../../../api/project/getListProjectApi"
-import { ProjectPersoninfoCard } from "./projectPersonInfoCard"
-import { Modal } from "../../../components/modal/modal"
-import { flex, gap } from "../../../style/style"
-import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { DataProject } from "../../../api/project/getListProjectApi"
 
 type Prop = {
     item: DataProject
+    onEdit: (id: number) => void
+    onDelete: (id: number) => void
 }
 
-export const ProjectItem = ({ item }: Prop) => {
-    const navigate = useNavigate()
+export const ProjectItem = ({ item, onEdit, onDelete }: Prop) => {
     return (
-        <div css={project} onClick={() => navigate(`/project/${item.id}/detail`)}>
+        <div css={project}>
             <div css={projectInfo}>
                 <div css={fieldItem}>
                     <div className="title">Tên dự án :</div>
@@ -38,68 +34,24 @@ export const ProjectItem = ({ item }: Prop) => {
                     <div>{item.end_date ?? 'sẽ cập nhập sớm'}</div>
                 </div>
             </div>
-            {/* <div css={groupPeople}>
-                <div css={staffStyle}>
-                    <div className="title">nhân viên thuộc dự án</div>
-                    <div css={listProjectPerson}>
-                        {item.staff.map((m) => {
-                            return (
-                                <ProjectPersoninfoCard onClick={() => setShowProjectPerson({ ...m, user: 'staff' })} key={m.id} data={m} />
-                            )
-                        })}
-                    </div>
-                </div>
-                <div css={bossStyle}>
-                    <div className="title">người quản lí dự án</div>
-                    <div css={listProjectPerson}>
-                        {item.boss.map((m) => {
-                            return (
-                                <ProjectPersoninfoCard onClick={() => setShowProjectPerson({ ...m, user: 'boss' })} key={m.id} data={m} />
-                            )
-                        })}
-                    </div>
-                </div>
-            </div> */}
-            {/* {!!showProjectPerson && (
-                <Modal
-                    isOpen={!!showProjectPerson}
-                    title="Thông tin"
-                    onClose={() => setShowProjectPerson(null)}
-                    customCss={css`
-                        min-width: 300px;
-                    `}
-                >
-                    <div css={[flex, gap(10)]}>
-                        <div css={[]}>
-                            <div>tên :</div>
-                            <div>tên đăng nhập :</div>
-                            <div>tel :</div>
-                            <div>email :</div>
-                            <div>địa chỉ :</div>
-                            {showProjectPerson.user === 'staff' && (
-                                <>
-                                    <div>vai trò :</div>
-                                    <div>mức lương :</div>
-
-                                </>
-                            )}
-                        </div>
-                        <div css={[]}>
-                            <div>{showProjectPerson.name}</div>
-                            <div>{showProjectPerson.login_name}</div>
-                            <div>{showProjectPerson.tel}</div>
-                            <div>{showProjectPerson.email}</div>
-                            <div>{showProjectPerson.address}</div>
-                            {showProjectPerson.user === 'staff' && (
-                                <>
-                                    <div>{showProjectPerson.role}</div>
-                                    <div>{showProjectPerson.salary}</div>
-                                </>
-                            )}
-                        </div>
-                    </div>
-                </Modal>
-            )} */}
+            <div css={[action]}>
+                <button className="edit" onClick={(e) => {
+                    e.stopPropagation()
+                    if (item.id) {
+                        onEdit(item.id)
+                    }
+                }}>
+                    <i className="fa-solid fa-pen"></i>
+                </button>
+                <button className="delete" onClick={(e) => {
+                    e.stopPropagation()
+                    if (item.id) {
+                        onDelete(item.id)
+                    }
+                }}>
+                    <i className="fa-solid fa-trash"></i>
+                </button>
+            </div>
         </div>
     )
 }
@@ -117,10 +69,6 @@ const project = css`
     border-radius: 10px;
     box-shadow: 0px 0px 4px 0px #ccc;
     transition: all .3s ease-out;
-    @media (max-width: ${maxWidth1150px}) {
-        flex-direction: column;
-        gap: 20px;
-    }
 `
 
 
@@ -142,5 +90,29 @@ const fieldItem = css`
     .title {
         font-size: 14px;
         font-weight: 500;
+    }
+`
+
+const action = css`
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 5px;
+    button {
+        width: 30px;
+        height: 30px;
+        padding: 5px;
+        border-radius: 5px;
+        border: none;
+        cursor: pointer;
+    }
+    .edit {
+        color: white;
+        background-color: #b0e99a;
+    }
+    .delete {
+        color: white;
+        background-color: #f7a8a8;
     }
 `

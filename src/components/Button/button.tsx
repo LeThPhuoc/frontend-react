@@ -21,6 +21,7 @@ const typeCss = (type: TypeButton) => {
                 background-color: #CFDCFF;
                 :hover {
                     background-color: #7399FF;
+                    color: white;
                 }
             `
         }

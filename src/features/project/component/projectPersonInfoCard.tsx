@@ -13,6 +13,8 @@ type Prop = {
 }
 
 export const ProjectPersoninfoCard = ({ data, onClick, onEdit, onDelete, isDelete, isEdit }: Prop) => {
+    const isBoss = JSON.parse(localStorage.getItem('user') ?? '').id
+
     return (
         <div css={[content, isDelete && css`background-color: #ffd3d3;`]} onClick={onClick}>
             <div>
@@ -37,12 +39,16 @@ export const ProjectPersoninfoCard = ({ data, onClick, onEdit, onDelete, isDelet
                     }}>
                         <i className="fa-solid fa-pen"></i>
                     </button>
-                    <button className="delete" onClick={(e) => {
-                        onDelete && onDelete()
-                        e.stopPropagation()
-                    }}>
-                        <i className="fa-solid fa-trash"></i>
-                    </button>
+                    {
+                        isBoss !== data.id && (
+                            <button className="delete" onClick={(e) => {
+                                onDelete && onDelete()
+                                e.stopPropagation()
+                            }}>
+                                <i className="fa-solid fa-trash"></i>
+                            </button>
+                        )
+                    }
                 </div>
             )}
         </div>

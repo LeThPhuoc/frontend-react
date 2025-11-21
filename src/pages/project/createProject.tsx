@@ -39,6 +39,7 @@ export const CreateProject = ({ isOpen, onClose }: Props) => {
                     showAlert(e.response?.data.message ?? 'Có lỗi vui lòng thử lại', 'error')
                 }, success: () => {
                     showAlert('Tạo mới dự án thành công', 'success')
+                    onClose()
                 }
             })
         }
