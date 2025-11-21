@@ -1,24 +1,26 @@
 /** @jsxImportSource @emotion/react */
 import React, { useEffect, useState } from "react";
 import { css } from "@emotion/react";
-import api from "../../config_api/axiosConfig";
 import { CreateStaff } from "./createStaff";
 import { getListStaffApi, Staff as StaffType } from "../../api/staff/getListStaffApi";
 import { Button } from "../../components/Button/button";
 import { TextField } from "../../components/input/TextField";
+import { useDebounce } from "../../components/useDebounce";
 
 export const Staff = () => {
     const [listStaff, setListStaff] = useState<StaffType[]>([])
     const [isOpenCreateStaff, setIsOpenCreateStaff] = useState(false)
-    const [isReload, setIsReLoad] = useState(false)
+    const [searchTerm, setSearchTerm] = useState('')
+    const debouncedValue = useDebounce(searchTerm)
 
     useEffect(() => {
-            getListStaffApi({
-                success: (data) => {
-                    setListStaff(data)
-                }
-            })
-    }, [])
+        getListStaffApi({
+            searchTerm: debouncedValue,
+            success: (data) => {
+                setListStaff(data)
+            }
+        })
+    }, [debouncedValue])
 
     return (
         <div css={container}>
@@ -27,8 +29,10 @@ export const Staff = () => {
                 <div css={toolbar}>
                     <TextField
                         positionLabel="left"
-                        label="Tìm kiếm" 
-                        value=''
+                        label="Tìm kiếm"
+                        placeholder="Nhập để tìm kiếm tên"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
                     />
                     <Button onClick={() => setIsOpenCreateStaff(!isOpenCreateStaff)}>Thêm nhân viên</Button>
                 </div>

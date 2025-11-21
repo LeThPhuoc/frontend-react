@@ -24,14 +24,14 @@ export const ModalDetailStaffBoss = ({ data, isOpen, onClose }: Props) => {
             `}
         >
             <div css={[flex, gap(5), flexCol]}>
-                <TextField label="Tên :" value={data?.name ?? ''} disabled />
-                <TextField label="tên đăng nhập :" value={data?.login_name ?? ''} disabled />
-                <TextField label="tel :" value={data?.tel ?? ''} disabled />
-                <TextField label="email :" value={data?.email ?? ''} disabled />
-                <TextField label="địa chỉ :" value={data?.address ?? ''} disabled />
-                <TextField label="vai trò :" value={data?.role ?? ''} disabled />
+                <TextField isFullWidth label="Tên :" value={data?.name ?? ''} disabled />
+                <TextField isFullWidth label="tên đăng nhập :" value={data?.login_name ?? ''} disabled />
+                <TextField isFullWidth label="tel :" value={data?.tel ?? ''} disabled />
+                <TextField isFullWidth label="email :" value={data?.email ?? ''} disabled />
+                <TextField isFullWidth label="địa chỉ :" value={data?.address ?? ''} disabled />
+                <TextField isFullWidth label="vai trò :" value={data?.role ?? ''} disabled />
                 {data?.user === 'staff' && (
-                    <TextField label="mức lương :" value={data?.salary ?? ''} disabled />
+                    <TextField isFullWidth label="mức lương :" value={data?.salary ?? ''} disabled />
                 )}
             </div>
         </Modal>

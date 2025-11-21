@@ -8,20 +8,24 @@ import { DataProject, getListProjectApi } from "../../api/project/getListProject
 import { ProjectItem } from "../../features/project/component/projectItem"
 import { flex, flexCol, gap } from "../../style/style"
 import { Button } from "../../components/Button/button"
+import { useDebounce } from "../../components/useDebounce"
 
 export const Project = () => {
     const [isCreateProject, setIsCreateProject] = useState(false)
     const [listProject, setListProject] = useState<DataProject[]>([])
+    const [searchTerm, setSearchTerm] = useState('')
+    const debouncedValue = useDebounce(searchTerm)
 
     useEffect(() => {
-        if (!isCreateProject) {
+        // if (!isCreateProject) {
             getListProjectApi({
+                searchTerm: debouncedValue,
                 success: (data) => {
                     setListProject(data ?? [])
                 }
             })
-        }
-    }, [isCreateProject])
+        // }
+    }, [debouncedValue])
 
     return (
         <div css={container}>
@@ -31,7 +35,7 @@ export const Project = () => {
                 </div>
                 <div css={headerTool}>
                     <label htmlFor="">tìm kiếm</label>
-                    <TextField onChange={(e) => console.log(e.target.value)} value={''} />
+                    <TextField onChange={(e) => setSearchTerm(e.target.value)} value={searchTerm} />
                     <Button onClick={() => setIsCreateProject(!isCreateProject)}>tạo mơi dự án</Button>
                 </div>
             </div>
