@@ -2,9 +2,9 @@
 
 import { css } from "@emotion/react"
 import { TextField } from "../../components/input/TextField"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { BossProject, DataProject, StaffProject } from "../../api/project/getListProjectApi"
-import { flex, flex1, flexCol, gap } from "../../style/style"
+import { flex, flex1, gap } from "../../style/style"
 import { useParams } from "react-router-dom"
 import { ProjectPersoninfoCard } from "../../features/project/component/projectPersonInfoCard"
 import { ModalDetailStaffBoss } from "../../features/project/modal/modalDetailStaffBoss"
@@ -20,7 +20,7 @@ export const ProjectDetail = () => {
     const { showAlert } = useAlert()
     const [projectDefault, setProjectDefault] = useState<DataProject | null>(null)
     const [projectPersonDetail, setProjectPersonDetail] = useState<BossProject | StaffProject | null>(null)
-    const [listDeleteStaffBoss, setListDeleteStaffBoss] = useState<{staff_id: number[], boss_id: number[]}>({staff_id: [], boss_id: []})
+    const [listDeleteStaffBoss, setListDeleteStaffBoss] = useState<{ staff_id: number[], boss_id: number[] }>({ staff_id: [], boss_id: [] })
     const [dataModalEditStaffBoss, setDataModalEditStaffBoss] = useState<BossProject | StaffProject | null>(null)
     const { id } = useParams()
 
@@ -80,13 +80,13 @@ export const ProjectDetail = () => {
 
     const handleDeleteStaffBossFromProject = () => {
         DeleteStaffFromProjectApi({
-            idProject: id ?? '', 
-            dataListStaffId: listDeleteStaffBoss.staff_id.map((id) => ({ id })),
-            dataListBossId: listDeleteStaffBoss.boss_id.map((id) => ({ id })),
+            project_id: id ?? '',
+            dataListStaffId: listDeleteStaffBoss.staff_id,
+            dataListBossId: listDeleteStaffBoss.boss_id,
             success: () => {
                 handleGetDetailProject()
                 showAlert('Xóa nhân viên thành công', 'success')
-                setListDeleteStaffBoss({staff_id: [], boss_id: []})
+                setListDeleteStaffBoss({ staff_id: [], boss_id: [] })
             }
         })
     }
@@ -105,6 +105,17 @@ export const ProjectDetail = () => {
             })
         }
     }
+
+    const isDisableBtnResetValue = useMemo(() => {
+        if (!projectDefault) return true
+        return (
+            projectDefault.address === formik.values.address &&
+            projectDefault.name === formik.values.name &&
+            projectDefault.description === formik.values.description &&
+            (projectDefault.start_date ?? '') === (formik.values.start_date ?? '') &&
+            (projectDefault.end_date ?? '') === (formik.values.end_date ?? '')
+        )
+    }, [formik.values, projectDefault])
 
     return (
         <div css={container}>
@@ -156,6 +167,7 @@ export const ProjectDetail = () => {
                     }}
                 />
                 <Button
+                    disabled={isDisableBtnResetValue}
                     isFullWidth
                     onClick={handleResetForm}
                     customCss={css`
@@ -181,13 +193,13 @@ export const ProjectDetail = () => {
                                     onDelete={() => {
                                         if (listDeleteStaffBoss.staff_id.includes(m.id)) {
                                             setListDeleteStaffBoss({
-                                                staff_id: listDeleteStaffBoss.staff_id.filter((id) => id !== m.id), 
+                                                staff_id: listDeleteStaffBoss.staff_id.filter((id) => id !== m.id),
                                                 boss_id: listDeleteStaffBoss.boss_id
                                             })
                                             return
                                         } else {
                                             setListDeleteStaffBoss({
-                                                staff_id: [...listDeleteStaffBoss.staff_id, m.id], 
+                                                staff_id: [...listDeleteStaffBoss.staff_id, m.id],
                                                 boss_id: listDeleteStaffBoss.boss_id
                                             })
                                         }
@@ -205,7 +217,7 @@ export const ProjectDetail = () => {
                                 thêm nhân viên
                             </Button>
                         </div>
-                        {listDeleteStaffBoss.staff_id.length > 0 && (
+                        {listDeleteStaffBoss.staff_id.length > 0 && listDeleteStaffBoss.boss_id.length === 0 && (
                             <div css={flex1}>
                                 <Button
                                     isFullWidth
@@ -232,13 +244,13 @@ export const ProjectDetail = () => {
                                     onDelete={() => {
                                         if (listDeleteStaffBoss.boss_id.includes(m.id)) {
                                             setListDeleteStaffBoss({
-                                                staff_id: listDeleteStaffBoss.staff_id, 
+                                                staff_id: listDeleteStaffBoss.staff_id,
                                                 boss_id: listDeleteStaffBoss.boss_id.filter((id) => id !== m.id)
                                             })
                                             return
                                         } else {
                                             setListDeleteStaffBoss({
-                                                staff_id: listDeleteStaffBoss.staff_id, 
+                                                staff_id: listDeleteStaffBoss.staff_id,
                                                 boss_id: [...listDeleteStaffBoss.boss_id, m.id]
                                             })
                                         }
@@ -254,7 +266,7 @@ export const ProjectDetail = () => {
                                 thêm quản lí
                             </Button>
                         </div>
-                        {listDeleteStaffBoss.boss_id.length > 0 && (
+                        {listDeleteStaffBoss.boss_id.length > 0 && listDeleteStaffBoss.staff_id.length === 0 && (
                             <div css={flex1}>
                                 <Button
                                     isFullWidth
@@ -267,6 +279,11 @@ export const ProjectDetail = () => {
                         )}
                     </div>
                 </div>
+                {
+                    listDeleteStaffBoss.staff_id.length > 0 && listDeleteStaffBoss.boss_id.length > 0 && (
+                        <Button isFullWidth>Xóa người khỏi dự án</Button>
+                    )
+                }
             </div>
             {!!projectPersonDetail && (
                 <ModalDetailStaffBoss

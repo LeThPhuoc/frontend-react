@@ -1,12 +1,12 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react"
-import { TextField } from "../../components/input/TextField"
+import { TextField } from "../../../components/input/TextField"
 import { useFormik } from "formik"
 import * as Yup from 'yup'
-import { useAlert } from "../../components/Alert/AlertProvider";
-import { createProjectApi, DataCreateProject } from "../../api/project/createProjectApi";
-import { Modal } from "../../components/modal/modal";
-import { Button } from "../../components/Button/button";
+import { useAlert } from "../../../components/Alert/AlertProvider";
+import { createProjectApi, DataCreateProject } from "../../../api/project/createProjectApi";
+import { Modal } from "../../../components/modal/modal";
+import { Button } from "../../../components/Button/button";
 
 const validationSchema = Yup.object({
     name: Yup.string().required('Bạn chưa nhập tên dự án'),

@@ -3,7 +3,7 @@
 import { css } from "@emotion/react"
 import { TextField } from "../../components/input/TextField"
 import { useEffect, useState } from "react"
-import { CreateProject } from "./createProject"
+import { CreateProject } from "../../features/project/modal/createProject"
 import { DataProject, getListProjectApi } from "../../api/project/getListProjectApi"
 import { ProjectItem } from "../../features/project/component/projectItem"
 import { flex, flexCol, gap } from "../../style/style"

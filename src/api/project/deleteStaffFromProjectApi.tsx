@@ -1,15 +1,15 @@
 import api from "../../config_api/axiosConfig"
 
 type Props = {
-    idProject: string | number
-    dataListStaffId: DataDeleteStaffFromProject[],
-    dataListBossId: DataDeleteStaffFromProject[],
+    project_id: string | number
+    dataListStaffId: number[],
+    dataListBossId: number[],
     success?: (data: any) => void,
     failure?: (error: any) => void
 }
 
-export const DeleteStaffFromProjectApi = async ({ idProject, dataListStaffId, dataListBossId, success, failure }: Props) => {
-    await api.post(`/project/${idProject}/delete_staff_boss`, {
+export const DeleteStaffFromProjectApi = async ({ project_id, dataListStaffId, dataListBossId, success, failure }: Props) => {
+    await api.post(`/project/${project_id}/delete_staff_boss`, {
         staff_id: dataListStaffId,
         boss_id: dataListBossId
     }).then((response) => {
@@ -18,8 +18,4 @@ export const DeleteStaffFromProjectApi = async ({ idProject, dataListStaffId, da
         console.log(error)
         failure && failure(error)
     })
-}
-
-export type DataDeleteStaffFromProject = {
-    id: string | number
 }

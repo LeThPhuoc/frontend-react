@@ -9,11 +9,12 @@ import { useFormik } from "formik"
 import { Button } from "../../../components/Button/button"
 import { editStaffBossApi } from "../../../api/project/editStaffBossApi"
 import { useAlert } from "../../../components/Alert/AlertProvider"
+import { BossProject, StaffProject } from "../../../api/project/getListProjectApi"
 
 type Props = {
     isOpen: boolean
     onClose: () => void
-    data: any
+    data: BossProject | StaffProject
     handleGetDetailProject?: () => void
 }
 
@@ -25,7 +26,7 @@ export const ModalEditStaffBoss = ({ data, isOpen, onClose, handleGetDetailProje
     }>({
         initialValues: {
             role: data?.role ?? '',
-            salary: data?.salary ?? '',
+            salary: data.user === 'staff' ? (data as StaffProject).salary ?? '' : '',
         },
         validateOnMount: false,
         validateOnChange: false,
@@ -36,7 +37,7 @@ export const ModalEditStaffBoss = ({ data, isOpen, onClose, handleGetDetailProje
             editStaffBossApi({
                 project_id: data?.project_id ?? '',
                 role: data?.user ?? '',
-                id: data?.id ?? '',
+                user_id: data?.id ?? '',
                 data: {
                     role: values.role,
                     salary: values.salary
