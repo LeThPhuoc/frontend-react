@@ -33,7 +33,6 @@ export const ModalEditStaffBoss = ({ data, isOpen, onClose, handleGetDetailProje
         validateOnBlur: false,
         // validationSchema: ,
         onSubmit: async values => {
-            console.log(values)
             editStaffBossApi({
                 project_id: data?.project_id ?? '',
                 role: data?.user ?? '',

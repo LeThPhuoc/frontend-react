@@ -68,6 +68,7 @@ const content = css`
 
 const childStyle = css`
     overflow-y: auto;
+    flex: 1;
 `
 
 const header = css`

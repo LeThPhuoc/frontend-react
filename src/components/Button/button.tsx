@@ -8,14 +8,14 @@ type Props = {
     children: React.ReactNode
     onClick?: () => void
     disabled?: boolean
-    type?: TypeButton
+    variant?: TypeButton
     customCss?: SerializedStyles | SerializedStyles[]
 }
 
 type TypeButton = 'primary' | 'secondary' | 'delete';
 
-const typeCss = (type: TypeButton) => {
-    switch (type) {
+const typeCss = (variant: TypeButton) => {
+    switch (variant) {
         case 'primary': {
             return css`
                 background-color: #CFDCFF;
@@ -75,7 +75,7 @@ export const Button = (
         children,
         onClick,
         disabled,
-        type = 'primary',
+        variant = 'primary',
         customCss
     }: Props
 ) => {
@@ -86,7 +86,7 @@ export const Button = (
                 baseCss(disabled,
                     isFullWidth),
                 sizeCss(size),
-                typeCss(type)
+                typeCss(variant)
             ]}
             onClick={onClick}
             disabled={disabled}

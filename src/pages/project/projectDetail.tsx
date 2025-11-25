@@ -73,8 +73,8 @@ export const ProjectDetail = () => {
                     address: data.address,
                     start_date: data.start_date ?? '',
                     end_date: data.end_date ?? '',
-                    staff: (data.staff ?? []).map((m) => ({ ...m, project_id: Number(data.id) })),
-                    boss: (data.boss ?? []).map((m) => ({ ...m, project_id: Number(data.id) }))
+                    staff: (data.staff ?? []).map((m) => ({ ...m, project_id: Number(data.id), user: 'staff' })),
+                    boss: (data.boss ?? []).map((m) => ({ ...m, project_id: Number(data.id), user: 'boss' }))
                 })
             }
         })
@@ -233,7 +233,7 @@ export const ProjectDetail = () => {
                                 <Button
                                     isFullWidth
                                     onClick={handleDeleteStaffBossFromProject}
-                                    type="delete"
+                                    variant="delete"
                                 >
                                     Xóa thành viên
                                 </Button>
@@ -282,7 +282,7 @@ export const ProjectDetail = () => {
                                 <Button
                                     isFullWidth
                                     onClick={handleDeleteStaffBossFromProject}
-                                    type="delete"
+                                    variant="delete"
                                 >
                                     Xóa quản lí
                                 </Button>
@@ -290,12 +290,18 @@ export const ProjectDetail = () => {
                         )}
                     </div>
                 </div>
-                {
-                    listDeleteStaffBoss.staff_id.length > 0 && listDeleteStaffBoss.boss_id.length > 0 && (
-                        <Button isFullWidth>Xóa người khỏi dự án</Button>
-                    )
-                }
             </div>
+            {
+                listDeleteStaffBoss.staff_id.length > 0 && listDeleteStaffBoss.boss_id.length > 0 && (
+                    <Button 
+                        variant="delete" 
+                        isFullWidth
+                        onClick={handleDeleteStaffBossFromProject}
+                    >
+                        Xóa người đã được chọn trong dự án
+                    </Button>
+                )
+            }
             {!!projectPersonDetail && (
                 <ModalDetailStaffBoss
                     isOpen={!!projectPersonDetail}
