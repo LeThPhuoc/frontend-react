@@ -25,3 +25,27 @@ export const alignCenter = css`
 export const flex1 = css`
     flex: 1;
 `
+
+export const mt = (index: number) => {
+    return css`
+        margin-top: ${index}px;
+    `
+}
+
+export const position = (position: "static" |
+    "relative" |
+    "absolute" |
+    "fixed" |
+    "sticky" | "inherit" |
+    "initial" |
+    "revert" |
+    "revert - laye" |
+    "unset", top?: number, right?: number, bottom?: number, left?: number) => {
+    return css`
+        position: ${position};
+        top: ${top}px;
+        right: ${right}px;
+        bottom: ${bottom}px;
+        left: ${left}px;
+    `
+}

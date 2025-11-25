@@ -15,6 +15,7 @@ import { useAlert } from "../../components/Alert/AlertProvider"
 import { Button } from "../../components/Button/button"
 import { useFormik } from "formik"
 import { editProjectApi } from "../../api/project/editProjectApi"
+import { ModalAddStaffBossProject } from "../../features/project/modal/modalAddStaffBossProject"
 
 export const ProjectDetail = () => {
     const { showAlert } = useAlert()
@@ -22,6 +23,12 @@ export const ProjectDetail = () => {
     const [projectPersonDetail, setProjectPersonDetail] = useState<BossProject | StaffProject | null>(null)
     const [listDeleteStaffBoss, setListDeleteStaffBoss] = useState<{ staff_id: number[], boss_id: number[] }>({ staff_id: [], boss_id: [] })
     const [dataModalEditStaffBoss, setDataModalEditStaffBoss] = useState<BossProject | StaffProject | null>(null)
+    const [modalAddStaffBoss, setModalAddStaffBoss] = useState<{
+        isOpen: boolean,
+        title: string,
+        role: 'staff' | 'boss' | undefined
+    }
+    >({ isOpen: false, title: '', role: undefined })
     const { id } = useParams()
 
     const formik = useFormik<DataProject>({
@@ -176,7 +183,11 @@ export const ProjectDetail = () => {
                 >
                     Quay về trạng thái ban đầu
                 </Button>
-                <Button isFullWidth onClick={() => formik.submitForm()}>
+                <Button
+                    disabled={isDisableBtnResetValue}
+                    isFullWidth
+                    onClick={() => formik.submitForm()}
+                >
                     chỉnh sửa dự án
                 </Button>
             </div>
@@ -213,7 +224,7 @@ export const ProjectDetail = () => {
                     </div>
                     <div css={[flex, gap(5)]}>
                         <div css={flex1}>
-                            <Button isFullWidth>
+                            <Button isFullWidth onClick={() => setModalAddStaffBoss({ isOpen: true, title: 'Thêm nhân viên vào dự án', role: 'staff' })}>
                                 thêm nhân viên
                             </Button>
                         </div>
@@ -262,7 +273,7 @@ export const ProjectDetail = () => {
                     </div>
                     <div css={[flex, gap(5)]}>
                         <div css={flex1}>
-                            <Button isFullWidth>
+                            <Button isFullWidth onClick={() => setModalAddStaffBoss({ isOpen: true, title: 'Thêm quản lý vào dự án', role: 'boss' })}>
                                 thêm quản lí
                             </Button>
                         </div>
@@ -298,6 +309,15 @@ export const ProjectDetail = () => {
                     isOpen={!!dataModalEditStaffBoss}
                     onClose={() => setDataModalEditStaffBoss(null)}
                     handleGetDetailProject={handleGetDetailProject}
+                />
+            )}
+            {modalAddStaffBoss.isOpen && (
+                <ModalAddStaffBossProject
+                    project_id={formik.values.id}
+                    isOpen={modalAddStaffBoss.isOpen}
+                    onClose={() => setModalAddStaffBoss({ isOpen: false, title: '', role: undefined })}
+                    title={modalAddStaffBoss.title}
+                    role={modalAddStaffBoss.role}
                 />
             )}
         </div>

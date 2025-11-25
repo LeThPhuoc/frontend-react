@@ -8,6 +8,7 @@ type Props = {
     size?: 'md' | 'sm' | 'lg'
     value: string | number
     onChange?: (value: ChangeEvent<HTMLInputElement>) => void
+    onClick?: (e: React.MouseEvent) => void,
     isFullWidth?: boolean
     type?: string
     errorText?: string
@@ -47,6 +48,7 @@ export const TextField = (
         size = 'md',
         value,
         onChange,
+        onClick,
         isFullWidth,
         type = 'text',
         errorText,
@@ -67,6 +69,7 @@ export const TextField = (
                 placeholder={placeholder}
                 type={type}
                 disabled={disabled}
+                onClick={(e) => onClick && onClick(e)}
             />
             </div>
             {errorText && (

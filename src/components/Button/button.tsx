@@ -39,6 +39,7 @@ const typeCss = (type: TypeButton) => {
                 background-color: #FFD4D4;
                 :hover {
                     background-color: #FF6A6A;
+                    color: white;
                 }
             `}
     }
@@ -68,18 +69,28 @@ const sizeCss = (size: 'm' | 's' | 'l') => {
 }
 
 export const Button = (
-    { 
-        size = 'm', 
-        isFullWidth, 
-        children, 
-        onClick, 
-        disabled, 
-        type = 'primary', 
-        customCss 
+    {
+        size = 'm',
+        isFullWidth,
+        children,
+        onClick,
+        disabled,
+        type = 'primary',
+        customCss
     }: Props
 ) => {
     return (
-        <button css={[customCss, baseCss(disabled, isFullWidth), sizeCss(size), typeCss(type)]} onClick={onClick}>
+        <button
+            css={[
+                customCss,
+                baseCss(disabled,
+                    isFullWidth),
+                sizeCss(size),
+                typeCss(type)
+            ]}
+            onClick={onClick}
+            disabled={disabled}
+        >
             {children}
         </button>
     )
