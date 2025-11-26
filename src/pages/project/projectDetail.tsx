@@ -8,7 +8,7 @@ import { flex, flex1, gap } from "../../style/style"
 import { useParams } from "react-router-dom"
 import { ProjectPersoninfoCard } from "../../features/project/component/projectPersonInfoCard"
 import { ModalDetailStaffBoss } from "../../features/project/modal/modalDetailStaffBoss"
-import { DeleteStaffFromProjectApi } from "../../api/project/deleteStaffFromProjectApi"
+import { DeleteStaffBossFromProjectApi } from "../../api/project/deleteStaffFromProjectApi"
 import { ModalEditStaffBoss } from "../../features/project/modal/modalEditStaffBoss"
 import { getDetailProjectApi } from "../../api/project/getDetailProjectApi"
 import { useAlert } from "../../components/Alert/AlertProvider"
@@ -86,7 +86,7 @@ export const ProjectDetail = () => {
     }, [])
 
     const handleDeleteStaffBossFromProject = () => {
-        DeleteStaffFromProjectApi({
+        DeleteStaffBossFromProjectApi({
             project_id: id ?? '',
             dataListStaffId: listDeleteStaffBoss.staff_id,
             dataListBossId: listDeleteStaffBoss.boss_id,
@@ -324,6 +324,7 @@ export const ProjectDetail = () => {
                     onClose={() => setModalAddStaffBoss({ isOpen: false, title: '', role: undefined })}
                     title={modalAddStaffBoss.title}
                     role={modalAddStaffBoss.role}
+                    handleSubmit={handleGetDetailProject}
                 />
             )}
         </div>

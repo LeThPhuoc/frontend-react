@@ -20,12 +20,14 @@ type Props = {
     onClose: () => void
     title: string
     role?: 'staff' | 'boss'
+    handleSubmit?: () => void
 }
 
-export const ModalAddStaffBossProject = ({ project_id, title, isOpen, onClose, role }: Props) => {
+export const ModalAddStaffBossProject = ({ project_id, title, isOpen, onClose, role, handleSubmit }: Props) => {
     const [searchTerm, setSearchTerm] = useState('');
     const debounce = useDebounce(searchTerm);
     const { showAlert } = useAlert();
+    const boss = JSON.parse(localStorage.getItem('user') ?? '')
 
     const formik = useFormik<{
         staffs: (StaffProject & { active: boolean })[],
@@ -40,7 +42,6 @@ export const ModalAddStaffBossProject = ({ project_id, title, isOpen, onClose, r
         validateOnBlur: false,
         // validationSchema: ,
         onSubmit: async values => {
-            console.log(values)
             if (project_id) {
                 addStaffBossProjectApi({
                     project_id: project_id,
@@ -53,6 +54,7 @@ export const ModalAddStaffBossProject = ({ project_id, title, isOpen, onClose, r
                     success: () => {
                         showAlert('Thêm nhân viên thành công', 'success')
                         onClose && onClose()
+                        handleSubmit && handleSubmit()
                     }
                 })
             }
@@ -63,6 +65,7 @@ export const ModalAddStaffBossProject = ({ project_id, title, isOpen, onClose, r
         if (!project_id) return
         if (role == 'staff') {
             getStaffNotInProjectApi({
+                boss_id: boss.id,
                 project_id: project_id,
                 searchTerm: debounce, success: (data: any) => {
                     formik.setFieldValue('staffs', data.map((m: StaffProject) => ({ ...m,user: 'staff', active: false })))
@@ -214,7 +217,17 @@ export const ModalAddStaffBossProject = ({ project_id, title, isOpen, onClose, r
                         )
                     })}
                 </div>
-                <Button isFullWidth onClick={() => formik.submitForm()}>
+                <Button
+                    isFullWidth 
+                    onClick={() => formik.submitForm()}
+                    disabled={
+                        (
+                            role == 'staff' ? 
+                            formik.values.staffs.filter((fil) => fil.active).length == 0 : 
+                            formik.values.bosses.filter((fil) => fil.active).length == 0
+                        )
+                    }
+                >
                     Thêm
                 </Button>
             </div>

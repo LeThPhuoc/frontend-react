@@ -8,7 +8,7 @@ type Props = {
     failure?: (error: any) => void
 }
 
-export const DeleteStaffFromProjectApi = async ({ project_id, dataListStaffId, dataListBossId, success, failure }: Props) => {
+export const DeleteStaffBossFromProjectApi = async ({ project_id, dataListStaffId, dataListBossId, success, failure }: Props) => {
     await api.post(`/project/${project_id}/delete_staff_boss`, {
         staff_id: dataListStaffId,
         boss_id: dataListBossId

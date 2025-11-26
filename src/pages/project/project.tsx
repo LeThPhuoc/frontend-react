@@ -11,6 +11,7 @@ import { Button } from "../../components/Button/button"
 import { useDebounce } from "../../components/useDebounce"
 import { useNavigate } from "react-router-dom"
 import { deleteProjectApi } from "../../api/project/deleteProjectApi"
+import { ModalDeleteProject } from "../../features/project/modal/modalDeleteProject"
 
 export const Project = () => {
     const naviage = useNavigate()
@@ -18,6 +19,7 @@ export const Project = () => {
     const [listProject, setListProject] = useState<DataProject[]>([])
     const [searchTerm, setSearchTerm] = useState('')
     const debouncedValue = useDebounce(searchTerm)
+    const [isModalDelete, setIsModalDelete] = useState<{ isOpen: boolean, project_id: number | null }>({ isOpen: false, project_id: null })
 
     useEffect(() => {
         getListProjectApi({
@@ -54,17 +56,37 @@ export const Project = () => {
                 <CreateProject isOpen={isCreateProject} onClose={() => setIsCreateProject(false)} />
             )}
             <div css={[flex, flexCol, gap(10)]}>
-                {listProject.map((item) => {
+                {listProject?.map((item) => {
                     return (
                         <ProjectItem
                             onEdit={(id) => handleEditProject(id)}
-                            onDelete={(id) => handleDeleteProject(id)}
+                            onDelete={(id) => {
+                                setIsModalDelete({ isOpen: true, project_id: id })
+                                handleDeleteProject(id)
+                            }
+                            }
                             item={item}
                             key={item.id}
                         />
                     )
                 })}
             </div>
+            {
+                isModalDelete.isOpen && (
+
+                    <ModalDeleteProject
+                        isOpen={isModalDelete.isOpen}
+                        onClose={() => setIsModalDelete({ isOpen: false, project_id: null })}
+                        onConfirm={() => {
+                            if (isModalDelete.project_id) {
+
+                                handleDeleteProject(isModalDelete.project_id)
+                            }
+                        }
+                        }
+                    />
+                )
+            }
         </div>
     )
 }

@@ -14,7 +14,7 @@ type Prop = {
 
 export const ProjectPersoninfoCard = ({ data, onClick, onEdit, onDelete, isDelete, isEdit }: Prop) => {
     const boss = JSON.parse(localStorage.getItem('user') ?? '')
-    const isBoss = (boss.email !== data.email && data.login_name !== boss.login_name)
+    const notTheBoss = !(boss.email === data.email && data.login_name === boss.login_name)
 
     return (
         <div css={[content, isDelete && css`background-color: #ffd3d3;`]} onClick={onClick}>
@@ -41,7 +41,7 @@ export const ProjectPersoninfoCard = ({ data, onClick, onEdit, onDelete, isDelet
                         <i className="fa-solid fa-pen"></i>
                     </button>
                     {
-                        isBoss && (
+                        notTheBoss && (
                             <button className="delete" onClick={(e) => {
                                 onDelete && onDelete()
                                 e.stopPropagation()

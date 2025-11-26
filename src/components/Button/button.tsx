@@ -19,7 +19,7 @@ const typeCss = (variant: TypeButton) => {
         case 'primary': {
             return css`
                 background-color: #CFDCFF;
-                :hover {
+                :not(:disabled):hover {
                     background-color: #7399FF;
                     color: white;
                 }
@@ -29,7 +29,7 @@ const typeCss = (variant: TypeButton) => {
             return css`
                 background-color: inherit;
                 border: 1px solid #EDE6DD;
-                :hover {
+                :not(:disabled):hover {
                     border: 1px solid #0E0E21
                 }
             `
@@ -37,7 +37,7 @@ const typeCss = (variant: TypeButton) => {
         case 'delete': {
             return css`
                 background-color: #FFD4D4;
-                :hover {
+                :not(:disabled):hover {
                     background-color: #FF6A6A;
                     color: white;
                 }
