@@ -57,11 +57,34 @@ export const ModalEditStaffBoss = ({ data, isOpen, onClose, handleGetDetailProje
         >
             <div css={[flex, flexCol, gap(20)]}>
                 <div css={[flex, gap(5), flexCol]}>
-                    <TextField label="Tên :" value={data?.name ?? ''} disabled />
-                    <TextField label="tên đăng nhập :" value={data?.login_name ?? ''} disabled />
-                    <TextField label="tel :" value={data?.tel ?? ''} disabled />
-                    <TextField label="email :" value={data?.email ?? ''} disabled />
-                    <TextField label="địa chỉ :" value={data?.address ?? ''} disabled />
+                    <TextField
+                        isFullWidth
+                        label="Tên :"
+                        value={data?.name ?? ''}
+                        disabled
+                    />
+                    <TextField
+                        isFullWidth
+                        label="tên đăng nhập :"
+                        value={data?.login_name ?? ''}
+                        disabled
+                    />
+                    <TextField
+                        isFullWidth
+                        label="tel :"
+                        value={data?.tel ?? ''}
+                        disabled />
+                    <TextField
+                        isFullWidth
+                        label="email :"
+                        value={data?.email ?? ''}
+                        disabled />
+                    <TextField
+                        isFullWidth
+                        label="địa chỉ :"
+                        value={data?.address ?? ''}
+                        disabled
+                    />
                     <TextField
                         emphasis
                         label="vai trò :"
@@ -78,6 +101,7 @@ export const ModalEditStaffBoss = ({ data, isOpen, onClose, handleGetDetailProje
                             onChange={(e) => formik.setFieldValue('salary', e.target.value)}
                             placeholder="nhập mức lương mới"
                             isFullWidth
+                            maxLength={11}
                         />
                     )}
                 </div>

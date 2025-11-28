@@ -208,6 +208,7 @@ export const ModalAddStaffBossProject = ({ project_id, title, isOpen, onClose, r
                                                         }))
                                                     }}
                                                     placeholder="Lương"
+                                                    maxLength={10}
                                                 />
                                             )}
                                         </div>

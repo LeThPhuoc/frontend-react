@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react"
-import { ChangeEvent } from "react"
+import { ChangeEvent, useEffect, useState } from "react"
 
 type Props = {
     placeholder?: string
@@ -16,6 +16,7 @@ type Props = {
     disabled?: boolean
     emphasis?: boolean
     positionLabel?: 'top' | 'left'
+    maxLength?: number
 }
 
 const sizeCss = (size: 'md' | 'sm' | 'lg') => {
@@ -55,22 +56,34 @@ export const TextField = (
         label,
         disabled,
         positionLabel = 'top',
+        maxLength
     }: Props) => {
+
+    const [text, setText] = useState(value)
+    useEffect(() => {
+        if (maxLength && value.toString().length <= maxLength) {
+            setText(value)
+        }
+        if (!maxLength) {
+            setText(value)
+        }
+    }, [value])
+
     return (
         <div css={[container, isFullWidth && css`width: 100%;`]}>
             <div css={customPositionLabel(positionLabel)}>
-            {label && (
-                <label htmlFor="" css={labelStyle}>{label}</label>
-            )}
-            <input
-                css={[baseCss(disabled, emphasis), (size && sizeCss(size)), isFullWidth && css`width: 100%;`]}
-                onChange={(e) => onChange && onChange(e)}
-                value={value}
-                placeholder={placeholder}
-                type={type}
-                disabled={disabled}
-                onClick={(e) => onClick && onClick(e)}
-            />
+                {label && (
+                    <label htmlFor="" css={labelStyle}>{label}</label>
+                )}
+                <input
+                    css={[baseCss(disabled, emphasis), (size && sizeCss(size)), isFullWidth && css`width: 100%;`]}
+                    onChange={(e) => onChange && onChange(e)}
+                    value={text}
+                    placeholder={placeholder}
+                    type={type}
+                    disabled={disabled}
+                    onClick={(e) => onClick && onClick(e)}
+                />
             </div>
             {errorText && (
                 <span css={errorTextStyle}>{errorText}</span>
