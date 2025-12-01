@@ -10,15 +10,14 @@ type Props = {
 export const getListProjectApi = async ({ searchTerm, page, success, failure }: Props) => {
     const role = localStorage.getItem('role')
     const id = JSON.parse(localStorage.getItem('user') ?? '').id
-    if (role === 'boss') {
-        await api.get(`/project/get_project/${role}/${id}?${searchTerm ? `search=${searchTerm}` : ''}${page? `&page=${page}` : ''}`)
+    await api.get(`/project/get_project/${role}/${id}?${searchTerm ? `search=${searchTerm}` : ''}${page ? `&page=${page}` : ''}`)
         .then((response) => {
             success && success(response.data)
         }).catch((error) => {
             console.log(error)
             failure && failure(error)
         })
-    }
+
 }
 
 export type DataProjectResponse = {

@@ -29,9 +29,7 @@ export const useStaffList = ({
     }
 
     useEffect(() => {
-        if (searchTerm) {
-            setPage(1)
-        }
+        setPage(1)
         getListStaff(searchTerm)
     }, [searchTerm])
 

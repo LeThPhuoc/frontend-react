@@ -29,9 +29,7 @@ export const useProjectList = ({
     }
 
     useEffect(() => {
-        if (searchTerm) {
-            setPage(1)
-        }
+        setPage(1)
         getListProject(searchTerm)
     }, [searchTerm])
 
