@@ -2,15 +2,16 @@ import api from "../../config_api/axiosConfig"
 
 type Props = {
     searchTerm?: string,
-    success?: (data: DataProject[]) => void,
+    page?: number
+    success?: (data: DataProjectResponse) => void,
     failure?: (error: any) => void
 }
 
-export const getListProjectApi = async ({ searchTerm, success, failure }: Props) => {
+export const getListProjectApi = async ({ searchTerm, page, success, failure }: Props) => {
     const role = localStorage.getItem('role')
     const id = JSON.parse(localStorage.getItem('user') ?? '').id
     if (role === 'boss') {
-        await api.get(`/project/get_project/${role}/${id}?${searchTerm ? `search=${searchTerm}` : ''}`)
+        await api.get(`/project/get_project/${role}/${id}?${searchTerm ? `search=${searchTerm}` : ''}${page? `&page=${page}` : ''}`)
         .then((response) => {
             success && success(response.data)
         }).catch((error) => {
@@ -18,6 +19,12 @@ export const getListProjectApi = async ({ searchTerm, success, failure }: Props)
             failure && failure(error)
         })
     }
+}
+
+export type DataProjectResponse = {
+    data: DataProject[]
+    page: number,
+    last_page: number
 }
 
 export type DataProject = {

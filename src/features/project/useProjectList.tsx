@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getListStaffApi, Staff } from "../../api/staff/getListStaffApi";
+import { DataProject, getListProjectApi } from "../../api/project/getListProjectApi";
 
 type Props = {
     rootRef: React.RefObject<HTMLDivElement | null>;
@@ -7,18 +7,18 @@ type Props = {
     searchTerm?: string
 };
 
-export const useStaffList = ({
+export const useProjectList = ({
     rootRef,
     offset = 50,
     searchTerm
 }: Props) => {
-    const [list, setList] = useState<Staff[]>([]);
+    const [list, setList] = useState<DataProject[]>([]);
     const [page, setPage] = useState(1);
     const [lastPage, setLastPage] = useState<number | null>(null);
     const [isLoading, setIsLoading] = useState(false);
 
-    const getListStaff = async (searchTerm?: string, page?: number) => {
-        await getListStaffApi({
+    const getListProject = async (searchTerm?: string, page?: number) => {
+        await getListProjectApi({
             searchTerm: searchTerm,
             page: page,
             success(data) {
@@ -32,7 +32,7 @@ export const useStaffList = ({
         if (searchTerm) {
             setPage(1)
         }
-        getListStaff(searchTerm)
+        getListProject(searchTerm)
     }, [searchTerm])
 
     useEffect(() => {
@@ -48,7 +48,7 @@ export const useStaffList = ({
             if (bottom <= offset && lastPage && page < lastPage) {
                 setIsLoading(true);
 
-                await getListStaffApi({
+                await getListProjectApi({
                     searchTerm: searchTerm,
                     page: page + 1,
                     success(data) {
