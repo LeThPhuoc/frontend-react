@@ -20,23 +20,23 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// api.interceptors.response.use(
-//   (response) => {
-//     return response;
-//   },
-//   (error) => {
-//     const status = error.response ? error.response.status : null;
+api.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    const status = error.response ? error.response.status : null;
 
-//     if (status === 401) {
-//       window.location.href = "/login"
-//       localStorage.removeItem('token');
-//       localStorage.removeItem('user');
-//       localStorage.removeItem('role');
-//       return Promise.reject(error);
-//     }
+    if (status === 401) {
+      window.location.href = "/login"
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('role');
+      return Promise.reject(error);
+    }
     
-//     return Promise.reject(error);
-//   }
-// );
+    return Promise.reject(error);
+  }
+);
 
 export default api;

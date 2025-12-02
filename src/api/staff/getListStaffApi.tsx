@@ -1,17 +1,24 @@
 import api from "../../config_api/axiosConfig"
 
 type Props = {
-    searchTerm?: string,
+    search?: string,
     page?: number
     success?: (data: ListStaffResonponse) => void,
     failure?: (error: any) => void
 }
 
-export const getListStaffApi = async ({ searchTerm, page, success, failure }: Props) => {
+export const getListStaffApi = async ({ search, page, success, failure }: Props) => {
     const role = localStorage.getItem('role')
     const bossId = JSON.parse(localStorage.getItem('user') ?? '').id
     if (role === 'boss') {
-        await api.get(`/get_list_staff/${bossId}?${searchTerm ? `search=${searchTerm}` : ''}${page ? `&page=${page}` : ''}`)
+        await api.get(`/get_list_staff/${bossId}`,
+            {
+                params: {
+                    search,
+                    page
+                }
+            }
+        )
             .then((response) => {
                 success && success(response.data)
             }).catch((error) => {

@@ -2,19 +2,28 @@
 
 import React, { use, useState } from "react";
 import { css } from "@emotion/react";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { Button } from "./Button/button";
+
+const role = localStorage.getItem('role')
 
 const listRender = [
     {
-        label: 'Quản trị viên', items: [
+        label: 'Quản lý thông tin', items: [
             { label: 'Quản lý tài khoản nhân viên', link: '/staff' },
             { label: 'Quản lý công trình', link: '/project' },
-            { label: 'Quản lý vật tư', link: '' },
         ]
     }
-]
-
+].map((m) => {
+    return {
+        ...m, items: m.items.filter((f) => {
+            if (role == 'staff') {
+                return f.link !== '/staff'
+            }
+            return f
+        })
+    }
+})
 type Prop = {
 }
 
@@ -41,7 +50,7 @@ export const SideBar = () => {
                                     {group.items.map((item, index) => {
                                         return (
                                             <li key={index}>
-                                                <a href={item.link}>{item.label}</a>
+                                                <NavLink to={item.link}>{item.label}</NavLink>
                                             </li>
                                         )
                                     })}

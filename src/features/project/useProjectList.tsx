@@ -19,7 +19,7 @@ export const useProjectList = ({
 
     const getListProject = async (searchTerm?: string, page?: number) => {
         await getListProjectApi({
-            searchTerm: searchTerm,
+            search: searchTerm,
             page: page,
             success(data) {
                 setList(data.data)
@@ -29,6 +29,7 @@ export const useProjectList = ({
     }
 
     useEffect(() => {
+        setLastPage(null)
         setPage(1)
         getListProject(searchTerm)
     }, [searchTerm])
@@ -47,7 +48,7 @@ export const useProjectList = ({
                 setIsLoading(true);
 
                 await getListProjectApi({
-                    searchTerm: searchTerm,
+                    search: searchTerm,
                     page: page + 1,
                     success(data) {
                         const newList = [...list, ...data.data].filter((item, index, self) => index === self.findIndex((obj) => obj.id === item.id))
