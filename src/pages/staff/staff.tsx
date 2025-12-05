@@ -6,16 +6,18 @@ import { Button } from "../../components/Button/button";
 import { TextField } from "../../components/input/TextField";
 import { useDebounce } from "../../components/useDebounce";
 import { useStaffList } from "../../features/staff/useStaffList";
+import { Loading } from "../../components/Loading";
 
 export const Staff = () => {
     const ref = useRef<HTMLDivElement>(null)
     const [isOpenCreateStaff, setIsOpenCreateStaff] = useState(false)
     const [searchTerm, setSearchTerm] = useState('')
     const debouncedValue = useDebounce(searchTerm)
-    const { list } = useStaffList({ rootRef: ref, searchTerm: debouncedValue });
+    const { list, isLoading } = useStaffList({ rootRef: ref, searchTerm: debouncedValue });
 
     return (
         <div css={container}>
+            {isLoading && <Loading />}
             <div css={header}>
                 <h3>Danh sách nhân viên</h3>
                 <div css={toolbar}>

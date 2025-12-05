@@ -18,6 +18,7 @@ export const useProjectList = ({
     const [isLoading, setIsLoading] = useState(false);
 
     const getListProject = async (searchTerm?: string, page?: number) => {
+        setIsLoading(true)
         await getListProjectApi({
             search: searchTerm,
             page: page,
@@ -26,6 +27,7 @@ export const useProjectList = ({
                 setLastPage(data.last_page)
             },
         })
+        setIsLoading(false)
     }
 
     useEffect(() => {

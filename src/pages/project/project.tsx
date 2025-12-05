@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom"
 import { deleteProjectApi } from "../../api/project/deleteProjectApi"
 import { ModalDeleteProject } from "../../features/project/modal/modalDeleteProject"
 import { useProjectList } from "../../features/project/useProjectList"
+import { Loading } from "../../components/Loading"
 
 export const Project = () => {
     const naviage = useNavigate()
@@ -20,7 +21,7 @@ export const Project = () => {
     const [searchTerm, setSearchTerm] = useState('')
     const debouncedValue = useDebounce(searchTerm)
     const [isModalDelete, setIsModalDelete] = useState<{ isOpen: boolean, project_id: number | null }>({ isOpen: false, project_id: null })
-    const { list } = useProjectList({ rootRef: ref, searchTerm: debouncedValue })
+    const { list, isLoading } = useProjectList({ rootRef: ref, searchTerm: debouncedValue })
 
     const handleEditProject = (id: number) => {
         naviage(`/project/${id}/detail`)
@@ -34,6 +35,10 @@ export const Project = () => {
 
     return (
         <div css={container}>
+            {
+                isLoading &&
+                <Loading />
+            }
             <div css={header}>
                 <div>
                     danh sách
@@ -47,26 +52,21 @@ export const Project = () => {
             {isCreateProject && (
                 <CreateProject isOpen={isCreateProject} onClose={() => setIsCreateProject(false)} />
             )}
-            <div css={css`
-                height: 800px;
-                overflow-y: auto;
-            `} ref={ref}>
-                <div css={[flex, flexCol, gap(10)]}>
-                    {list?.map((item) => {
-                        return (
-                            <ProjectItem
-                                onEdit={(id) => handleEditProject(id)}
-                                onDelete={(id) => {
-                                    setIsModalDelete({ isOpen: true, project_id: id })
-                                    handleDeleteProject(id)
-                                }
-                                }
-                                item={item}
-                                key={item.id}
-                            />
-                        )
-                    })}
-                </div>
+            <div css={contentListProject} ref={ref}>
+                {list?.map((item) => {
+                    return (
+                        <ProjectItem
+                            onEdit={(id) => handleEditProject(id)}
+                            onDelete={(id) => {
+                                setIsModalDelete({ isOpen: true, project_id: id })
+                                handleDeleteProject(id)
+                            }
+                            }
+                            item={item}
+                            key={item.id}
+                        />
+                    )
+                })}
             </div>
             {
                 isModalDelete.isOpen && (
@@ -108,3 +108,11 @@ const headerTool = css`
     gap: 8px;
     align-items: center;
 `
+
+const contentListProject = css`
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: calc(100vh - 100px);
+    overflow-y: auto;
+` 

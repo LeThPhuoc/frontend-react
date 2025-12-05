@@ -8,6 +8,7 @@ import { Modal } from '../../components/modal/modal';
 import { createStaffApi } from '../../api/staff/createStaffApi';
 import { useAlert } from '../../components/Alert/AlertProvider';
 import { Button } from '../../components/Button/button';
+import { Loading } from '../../components/Loading';
 
 type Props = {
     isOpen: boolean
@@ -48,7 +49,7 @@ const validationSchemaRegister = Yup.object({
 
 export const CreateStaff = ({ isOpen, onClose }: Props) => {
     const [isShowPassword, setIsShowPassword] = useState(false);
-    const [statusAlert, setStatusAlert] = useState<{ message: string[] | unknown[], type: 'error' | 'success' } | null>();
+    const [isLoading, setIsLoading] = useState(false)
     const { showAlert } = useAlert()
 
     const formik = useFormik<User>({
@@ -65,27 +66,23 @@ export const CreateStaff = ({ isOpen, onClose }: Props) => {
         validateOnBlur: false,
         validationSchema: validationSchemaRegister,
         onSubmit: async values => {
-            createStaffApi({data: values, success: (response) => {
-                showAlert('Tạo mới nhân viên thành công', 'success')
-                onClose && onClose()
-            }, failure: (error) => {
-                console.log(error)
-                showAlert(error.response.data.message[0] ?? '', 'error')
-            }})
+            setIsLoading(true)
+            await createStaffApi({
+                data: values, success: (response) => {
+                    showAlert('Tạo mới nhân viên thành công', 'success')
+                    onClose && onClose()
+                }, failure: (error) => {
+                    console.log(error)
+                    showAlert(error.response.data.message[0] ?? '', 'error')
+                }
+            })
+            setIsLoading(false)
         }
     })
 
-    useEffect(() => {
-        if (statusAlert) {
-            const timer = setTimeout(() => {
-                setStatusAlert(null);
-            }, 3000);
-            return () => clearTimeout(timer);
-        }
-    }, [statusAlert])
-
     return (
         <Modal isOpen={isOpen} onClose={onClose} title='Thông tin đăng kí'>
+            {isLoading && <Loading />}
             <div css={container}>
                 <div css={content}>
                     {listFieldRegister.map((item, index) => {

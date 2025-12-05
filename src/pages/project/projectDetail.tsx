@@ -16,6 +16,7 @@ import { Button } from "../../components/Button/button"
 import { useFormik } from "formik"
 import { editProjectApi } from "../../api/project/editProjectApi"
 import { ModalAddStaffBossProject } from "../../features/project/modal/modalAddStaffBossProject"
+import { Loading } from "../../components/Loading"
 
 export const ProjectDetail = () => {
     const { showAlert } = useAlert()
@@ -29,6 +30,7 @@ export const ProjectDetail = () => {
         role: 'staff' | 'boss' | undefined
     }
     >({ isOpen: false, title: '', role: undefined })
+    const [isLoading, setIsLoading] = useState(false)
     const { id } = useParams()
 
     const formik = useFormik<DataProject>({
@@ -47,7 +49,8 @@ export const ProjectDetail = () => {
         validateOnBlur: false,
         // validationSchema: ,
         onSubmit: async values => {
-            editProjectApi({
+            setIsLoading(true)
+            await editProjectApi({
                 project_id: id ?? '',
                 data: values,
                 success: () => {
@@ -58,10 +61,12 @@ export const ProjectDetail = () => {
                     showAlert(error.response.data.message, 'error')
                 }
             })
+            setIsLoading(false)
         }
     })
 
     const handleGetDetailProject = async () => {
+        setIsLoading(true)
         await getDetailProjectApi({
             project_id: id ?? '',
             success: (data) => {
@@ -78,6 +83,7 @@ export const ProjectDetail = () => {
                 })
             }
         })
+        setIsLoading(false)
     }
 
 
@@ -126,6 +132,7 @@ export const ProjectDetail = () => {
 
     return (
         <div css={container}>
+            {isLoading && <Loading/>}
             <h1 css={css`
                 text-align: center;
                 font-size: 24px;

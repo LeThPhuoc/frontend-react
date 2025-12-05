@@ -18,6 +18,7 @@ export const useStaffList = ({
     const [isLoading, setIsLoading] = useState(false);
 
     const getListStaff = async (searchTerm?: string, page?: number) => {
+        setIsLoading(true)
         await getListStaffApi({
             search: searchTerm,
             page: page,
@@ -26,6 +27,7 @@ export const useStaffList = ({
                 setLastPage(data.last_page)
             },
         })
+        setIsLoading(false)
     }
 
     useEffect(() => {
