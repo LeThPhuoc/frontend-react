@@ -5,23 +5,26 @@ type Props = {
     rootRef: React.RefObject<HTMLDivElement | null>;
     offset?: number;
     searchTerm?: string
+    per_page?: number
 };
 
 export const useProjectList = ({
     rootRef,
     offset = 50,
-    searchTerm
+    searchTerm,
+    per_page
 }: Props) => {
     const [list, setList] = useState<DataProject[]>([]);
     const [page, setPage] = useState(1);
     const [lastPage, setLastPage] = useState<number | null>(null);
     const [isLoading, setIsLoading] = useState(false);
 
-    const getListProject = async (searchTerm?: string, page?: number) => {
+    const getListProject = async (searchTerm?: string, per_page?: number, page?: number) => {
         setIsLoading(true)
         await getListProjectApi({
             search: searchTerm,
             page: page,
+            per_page,
             success(data) {
                 setList(data.data)
                 setLastPage(data.last_page)
@@ -33,7 +36,7 @@ export const useProjectList = ({
     useEffect(() => {
         setLastPage(null)
         setPage(1)
-        getListProject(searchTerm)
+        getListProject(searchTerm, per_page)
     }, [searchTerm])
 
     useEffect(() => {
@@ -52,6 +55,7 @@ export const useProjectList = ({
                 await getListProjectApi({
                     search: searchTerm,
                     page: page + 1,
+                    per_page,
                     success(data) {
                         const newList = [...list, ...data.data].filter((item, index, self) => index === self.findIndex((obj) => obj.id === item.id))
                         setList(newList);

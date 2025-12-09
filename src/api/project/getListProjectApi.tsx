@@ -3,17 +3,19 @@ import api from "../../config_api/axiosConfig"
 type Props = {
     search?: string,
     page?: number
+    per_page?: number,
     success?: (data: DataProjectResponse) => void,
     failure?: (error: any) => void
 }
 
-export const getListProjectApi = async ({ search, page, success, failure }: Props) => {
+export const getListProjectApi = async ({ search, page, per_page, success, failure }: Props) => {
     const role = localStorage.getItem('role')
     const id = JSON.parse(localStorage.getItem('user') ?? '').id
     await api.get(`/project/get_project/${role}/${id}`, {
         params: {
             search, 
-            page
+            page,
+            per_page
         }
     })
         .then((response) => {
