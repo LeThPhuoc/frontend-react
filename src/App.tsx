@@ -10,6 +10,7 @@ import { AuthThenticatedRoute } from './route/authThenticatedRoute';
 import { Project } from './pages/project/project';
 import { AlertProvider } from './components/Alert/AlertProvider';
 import { ProjectDetail } from './pages/project/projectDetail';
+import { NavBar } from './components/NavBar';
 
 function App() {
   const isAuthenticated = !!localStorage.getItem('token');
@@ -17,22 +18,22 @@ function App() {
   return (
     <>
       <AlertProvider>
-        <div css={flex}>
-          {(isAuthenticated || location.state) && (
-            <SideBar />
-          )}
-          <div css={css`
-          width: ${(isAuthenticated || location.state) ? 'calc(100% - 250px)' : '100%'};
+        {(isAuthenticated || location.state) && (
+          <NavBar />
+        )}
+        <div css={css`
+          /* width: ${(isAuthenticated || location.state) ? 'calc(100% - 250px)' : '100%'}; */
+          margin: 40px auto 0px auto;
+          max-width: 1200px;
         `}>
-            <Routes>
-              <Route path="/login" element={<LoginOrRegister />} />
-              <Route element={<AuthThenticatedRoute isAuthenticated={(isAuthenticated || location.state)} />}>
-                <Route path="/staff" element={<Staff />} />
-                <Route path="/project" element={<Project />} />
-                <Route path="/project/:id/detail" element={<ProjectDetail />} />
-              </Route>
-            </Routes>
-          </div>
+          <Routes>
+            <Route path="/login" element={<LoginOrRegister />} />
+            <Route element={<AuthThenticatedRoute isAuthenticated={(isAuthenticated || location.state)} />}>
+              <Route path="/staff" element={<Staff />} />
+              <Route path="/project" element={<Project />} />
+              <Route path="/project/:id/detail" element={<ProjectDetail />} />
+            </Route>
+          </Routes>
         </div>
       </AlertProvider>
     </>

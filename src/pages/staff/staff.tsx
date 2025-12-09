@@ -15,6 +15,26 @@ export const Staff = () => {
     const debouncedValue = useDebounce(searchTerm)
     const { list, isLoading } = useStaffList({ rootRef: ref, searchTerm: debouncedValue });
 
+    let role = localStorage.getItem('role')
+
+    useEffect(() => {
+        role = localStorage.getItem('role')
+    }, [])
+
+    if (role == 'staff') {
+        return <div css={css`
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: red;
+            font-size: 20px;
+        `}>
+            bạn không có quyền truy cập trang này
+        </div>
+    }
+
     return (
         <div css={container}>
             {isLoading && <Loading />}

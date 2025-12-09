@@ -2,7 +2,7 @@
 
 import { css } from "@emotion/react"
 import { TextField } from "../../components/input/TextField"
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { CreateProject } from "../../features/project/modal/createProject"
 import { ProjectItem } from "../../features/project/component/projectItem"
 import { flex, flexCol, gap } from "../../style/style"
@@ -15,6 +15,7 @@ import { useProjectList } from "../../features/project/useProjectList"
 import { Loading } from "../../components/Loading"
 
 export const Project = () => {
+    let role = localStorage.getItem('role');
     const naviage = useNavigate()
     const ref = useRef(null)
     const [isCreateProject, setIsCreateProject] = useState(false)
@@ -46,7 +47,9 @@ export const Project = () => {
                 <div css={headerTool}>
                     <label htmlFor="">tìm kiếm</label>
                     <TextField onChange={(e) => setSearchTerm(e.target.value)} value={searchTerm} />
-                    <Button onClick={() => setIsCreateProject(!isCreateProject)}>tạo mơi dự án</Button>
+                    {role == 'boss' &&
+                        <Button onClick={() => setIsCreateProject(!isCreateProject)}>tạo mơi dự án</Button>
+                    }
                 </div>
             </div>
             {isCreateProject && (
@@ -113,6 +116,6 @@ const contentListProject = css`
     display: flex;
     flex-direction: column;
     gap: 10px;
-    height: calc(100vh - 100px);
+    height: calc(100vh - 140px);
     overflow-y: auto;
 ` 

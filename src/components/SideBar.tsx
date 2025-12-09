@@ -1,44 +1,58 @@
 /** @jsxImportSource @emotion/react */
 
-import React, { use, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { css } from "@emotion/react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Button } from "./Button/button";
 
-const role = localStorage.getItem('role')
-
-const listRender = [
-    {
-        label: 'Quản lý thông tin', items: [
-            { label: 'Quản lý tài khoản nhân viên', link: '/staff' },
-            { label: 'Quản lý công trình', link: '/project' },
-        ]
-    }
-].map((m) => {
-    return {
-        ...m, items: m.items.filter((f) => {
-            if (role == 'staff') {
-                return f.link !== '/staff'
-            }
-            return f
-        })
-    }
-})
 type Prop = {
 }
 
 export const SideBar = () => {
     const navigate = useNavigate()
-    const [activeIndex, setActiveIndex] = useState(listRender.map(() => false));
+
+    let role = localStorage.getItem('role')
+
+    useEffect(() => {
+        role = localStorage.getItem('role')
+    }, [])
+
+    const list = useMemo(() => {
+        const reder = [
+            {
+                label: 'Quản lý công việc', items: [
+                    { label: 'Quản lý tài khoản nhân viên', link: '/staff' },
+                    { label: 'Quản lý công trình', link: '/project' },
+                    { label: 'Checkin công việc', link: '/checkin_page' },
+                ]
+            }
+        ].map((m) => {
+            return {
+                ...m, items: m.items.filter((f) => {
+                    if (role == 'staff') {
+                        return f.link !== '/staff'
+                    }
+                    return f
+                })
+            }
+        })
+
+        return reder
+    }, [role])
+
+    const [activeIndex, setActiveIndex] = useState(list.map(() => false));
     const handleClickShowItems = (index: number) => {
-        let newActiveIndex = [...activeIndex];
-        newActiveIndex[index] = !newActiveIndex[index];
-        setActiveIndex(newActiveIndex);
+        setActiveIndex((prev) => [...prev].map((m, prevIndex) => {
+            if (prevIndex == index) {
+                return !m
+            }
+            return m
+        }));
     }
     return (
         <div css={container}>
             <ul>
-                {listRender.map((group, index) => {
+                {list.map((group, index) => {
                     let showItems = activeIndex[index];
                     return (
                         <li key={index}>
