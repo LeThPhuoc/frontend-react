@@ -5,9 +5,13 @@ import { useEffect, useMemo, useState } from "react"
 import { NavLink, useNavigate } from "react-router-dom"
 import { Button } from "./Button/button"
 import { flex, justifyBetween } from "../style/style"
+import { useClickOutside } from "./useClickOutSide"
 
 export const NavBar = () => {
     const [showSideBar, setShowSideBar] = useState(false)
+    const documentRef = useClickOutside<HTMLDivElement>(() => {
+        setShowSideBar(false)
+    })
     const navigate = useNavigate()
     let role = localStorage.getItem('role')
 
@@ -48,7 +52,7 @@ export const NavBar = () => {
         }));
     }
 
-    return <div css={container}>
+    return <div css={container} ref={documentRef}>
         <div css={[flex, justifyBetween, css`
             height: 100%;
         `]}>
