@@ -11,7 +11,8 @@ import { Project } from './pages/project/project';
 import { AlertProvider } from './components/Alert/AlertProvider';
 import { ProjectDetail } from './pages/project/projectDetail';
 import { NavBar } from './components/NavBar';
-import { CheckinPage } from './pages/checkin_page/CheckinPage';
+import { CheckinList } from './pages/checkin/CheckinList';
+import { CheckinPage } from './pages/checkin/CheckinPage';
 
 function App() {
   const isAuthenticated = !!localStorage.getItem('token');
@@ -33,7 +34,8 @@ function App() {
               <Route path="/staff" element={<Staff />} />
               <Route path="/project" element={<Project />} />
               <Route path="/project/:id/detail" element={<ProjectDetail />} />
-              <Route path="checkin_page" element={<CheckinPage />} />
+              <Route path="checkin_list" element={<CheckinList />} />
+              <Route path="checkin_page/:id" element={<CheckinPage />} />
             </Route>
           </Routes>
         </div>

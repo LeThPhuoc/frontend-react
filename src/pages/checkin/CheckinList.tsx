@@ -2,27 +2,18 @@
 
 import { css } from "@emotion/react"
 import { TextField } from "../../components/input/TextField"
-import { useEffect, useRef, useState } from "react"
-import { CreateProject } from "../../features/project/modal/createProject"
-import { ProjectItem } from "../../features/project/component/projectItem"
-import { flex, flexCol, gap } from "../../style/style"
-import { Button } from "../../components/Button/button"
+import { useRef, useState } from "react"
 import { useDebounce } from "../../components/useDebounce"
 import { useNavigate } from "react-router-dom"
-import { deleteProjectApi } from "../../api/project/deleteProjectApi"
-import { ModalDeleteProject } from "../../features/project/modal/modalDeleteProject"
 import { useProjectList } from "../../features/project/useProjectList"
 import { Loading } from "../../components/Loading"
 
-export const CheckinPage = () => {
-    let role = localStorage.getItem('role');
-    const naviage = useNavigate()
+export const CheckinList = () => {
     const ref = useRef(null)
-    const [isCreateProject, setIsCreateProject] = useState(false)
     const [searchTerm, setSearchTerm] = useState('')
     const debouncedValue = useDebounce(searchTerm)
-    const [isModalDelete, setIsModalDelete] = useState<{ isOpen: boolean, project_id: number | null }>({ isOpen: false, project_id: null })
     const { list, isLoading } = useProjectList({ rootRef: ref, searchTerm: debouncedValue, per_page: 10 })
+    const navigate = useNavigate()
 
     return (
         <div css={container}>
@@ -42,7 +33,9 @@ export const CheckinPage = () => {
             <div css={contentListProject} ref={ref}>
                 {list?.map((item) => {
                     return (
-                        <div css={project} key={item.id}>
+                        <div css={project} key={item.id} onClick={() => {
+                            navigate(`/checkin_page/${item.id}`)
+                        }}>
                             <div css={projectInfo}>
                                 <div css={fieldItem}>
                                     <div className="title">Tên dự án :</div>

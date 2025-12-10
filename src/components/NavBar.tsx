@@ -25,7 +25,7 @@ export const NavBar = () => {
                 label: 'Quản lý công việc', items: [
                     { label: 'Quản lý tài khoản nhân viên', link: '/staff' },
                     { label: 'Quản lý công trình', link: '/project' },
-                    { label: 'Checkin công việc', link: '/checkin_page' },
+                    { label: 'Checkin công việc', link: '/checkin_list' },
                 ]
             }
         ].map((m) => {
