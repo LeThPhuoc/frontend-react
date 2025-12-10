@@ -37,21 +37,8 @@ export const CheckinPage = () => {
         validateOnMount: false,
         validateOnChange: false,
         validateOnBlur: false,
-        // validationSchema: ,
         onSubmit: async values => {
-            setIsLoading(true)
-            await editProjectApi({
-                project_id: id ?? '',
-                data: values,
-                success: () => {
-                    showAlert('Chỉnh sửa dự án thành công', 'success')
-                    handleGetDetailProject()
-                },
-                failure: (error) => {
-                    showAlert(error.response.data.message, 'error')
-                }
-            })
-            setIsLoading(false)
+            
         }
     })
 
@@ -96,27 +83,21 @@ export const CheckinPage = () => {
                     label="Tên dự án :"
                     value={formik.values.name ?? ''}
                     isFullWidth
-                    onChange={(e) => {
-                        formik.setFieldValue('name', e.target.value)
-                    }}
+                    
                 />
                 <TextField
                     disabled
                     label="Mô tả của dự án :"
                     value={formik.values.description ?? ''}
                     isFullWidth
-                    onChange={(e) => {
-                        formik.setFieldValue('description', e.target.value)
-                    }}
+                    
                 />
                 <TextField
                     disabled
                     label="Địa chỉ :"
                     value={formik.values.address ?? ''}
                     isFullWidth
-                    onChange={(e) => {
-                        formik.setFieldValue('address', e.target.value)
-                    }}
+                    
                 />
                 <TextField
                     disabled
@@ -124,9 +105,7 @@ export const CheckinPage = () => {
                     value={formik.values.start_date ?? ''}
                     isFullWidth
                     type="date"
-                    onChange={(e) => {
-                        formik.setFieldValue('start_date', e.target.value)
-                    }}
+                    
                 />
                 <TextField
                     disabled
@@ -134,10 +113,34 @@ export const CheckinPage = () => {
                     value={formik.values.end_date ?? ''}
                     isFullWidth
                     type="date"
-                    onChange={(e) => {
-                        formik.setFieldValue('end_date', e.target.value)
-                    }}
+                    
                 />
+            </div>
+            <div>
+                <table css={css`
+                    width: 100%;
+                `}>
+                    <thead>
+                        <tr>
+                            <th>tên</th>
+                            <th>vai trò</th>
+                            <th>checkin time</th>
+                            <th>checkout time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {formik.values.staff?.map((m) => {
+                            return (
+                                <tr key={m.id}>
+                                    <td>{m.name}</td>
+                                    <td>{m.role}</td>
+                                    <td>{m.name}</td>
+                                    <td>{m.name}</td>
+                                </tr>
+                            )
+                        })}
+                    </tbody>
+                </table>
             </div>
         </div>
     )

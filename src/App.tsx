@@ -25,7 +25,7 @@ function App() {
         )}
         <div css={css`
           /* width: ${(isAuthenticated || location.state) ? 'calc(100% - 250px)' : '100%'}; */
-          margin: 40px auto 0px auto;
+          margin: ${isAuthenticated ? '40px auto 0px auto' : ''};
           max-width: 1200px;
         `}>
           <Routes>
