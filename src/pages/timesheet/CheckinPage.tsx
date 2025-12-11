@@ -2,21 +2,14 @@
 
 import { css } from "@emotion/react"
 import { TextField } from "../../components/input/TextField"
-import { useEffect, useMemo, useState } from "react"
-import { BossProject, DataProject, StaffProject } from "../../api/project/getListProjectApi"
-import { flex, flex1, gap } from "../../style/style"
+import { useEffect, useState } from "react"
+import { DataProject } from "../../api/project/getListProjectApi"
 import { useParams } from "react-router-dom"
-import { ProjectPersoninfoCard } from "../../features/project/component/projectPersonInfoCard"
-import { ModalDetailStaffBoss } from "../../features/project/modal/modalDetailStaffBoss"
-import { DeleteStaffBossFromProjectApi } from "../../api/project/deleteStaffFromProjectApi"
-import { ModalEditStaffBoss } from "../../features/project/modal/modalEditStaffBoss"
 import { getDetailProjectApi } from "../../api/project/getDetailProjectApi"
 import { useAlert } from "../../components/Alert/AlertProvider"
-import { Button } from "../../components/Button/button"
 import { useFormik } from "formik"
-import { editProjectApi } from "../../api/project/editProjectApi"
-import { ModalAddStaffBossProject } from "../../features/project/modal/modalAddStaffBossProject"
 import { Loading } from "../../components/Loading"
+import { Button } from "../../components/Button/button"
 
 export const CheckinPage = () => {
     const { showAlert } = useAlert()
@@ -67,9 +60,6 @@ export const CheckinPage = () => {
         handleGetDetailProject()
     }, [])
 
-    const date = new Date()
-    console.log(new Date(date.getFullYear(), 12, 0).getDate())
-
     return (
         <div css={container}>
             {isLoading && <Loading/>}
@@ -117,30 +107,36 @@ export const CheckinPage = () => {
                 />
             </div>
             <div>
-                <table css={css`
-                    width: 100%;
-                `}>
-                    <thead>
-                        <tr>
-                            <th>tên</th>
-                            <th>vai trò</th>
-                            <th>checkin time</th>
-                            <th>checkout time</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {formik.values.staff?.map((m) => {
-                            return (
-                                <tr key={m.id}>
-                                    <td>{m.name}</td>
-                                    <td>{m.role}</td>
-                                    <td>{m.name}</td>
-                                    <td>{m.name}</td>
-                                </tr>
-                            )
-                        })}
-                    </tbody>
-                </table>
+                <h1 css={css`
+                    font-size: 24px;
+                    text-align: center;
+                `}>bảng Checkin</h1>
+                <div css={tableCheckin}>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>tên</th>
+                                <th>vai trò</th>
+                                <th>total</th>
+                                <th>checkin time</th>
+                                <th>checkout time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {formik.values.staff?.map((m) => {
+                                return (
+                                    <tr key={m.id}>
+                                        <td>{m.name}</td>
+                                        <td>{m.role}</td>
+                                        <td>{m.role}</td>
+                                        <td><Button isFullWidth>Checkin</Button></td>
+                                        <td><Button isFullWidth>Checkout</Button></td>
+                                    </tr>
+                                )
+                            })}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     )
@@ -161,4 +157,24 @@ const projectInfo = css`
     flex-direction: column;
     justify-content: center;
     gap: 5px;
+`
+
+const tableCheckin = css`
+    height: 600px;
+    overflow-y: auto;
+    table {
+        width: 100%;
+        border-spacing: 0px;
+    }
+    thead {
+        position: sticky;
+        top: 0px;
+        tr {
+            background-color: #6464b3;
+            color: white;
+            th {
+                padding: 5px;
+            }
+        }
+    }
 `

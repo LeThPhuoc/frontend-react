@@ -11,8 +11,8 @@ import { Project } from './pages/project/project';
 import { AlertProvider } from './components/Alert/AlertProvider';
 import { ProjectDetail } from './pages/project/projectDetail';
 import { NavBar } from './components/NavBar';
-import { CheckinList } from './pages/checkin/CheckinList';
-import { CheckinPage } from './pages/checkin/CheckinPage';
+import { CheckinList } from './pages/timesheet/CheckinList';
+import { CheckinPage } from './pages/timesheet/CheckinPage';
 
 function App() {
   const isAuthenticated = !!localStorage.getItem('token');
@@ -24,8 +24,7 @@ function App() {
           <NavBar />
         )}
         <div css={css`
-          /* width: ${(isAuthenticated || location.state) ? 'calc(100% - 250px)' : '100%'}; */
-          margin: ${isAuthenticated ? '40px auto 0px auto' : ''};
+          margin: ${isAuthenticated ? '40px auto 0px auto' : '0px auto'};
           max-width: 1200px;
         `}>
           <Routes>
