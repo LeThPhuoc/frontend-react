@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom"
 import { useProjectList } from "../../features/project/useProjectList"
 import { Loading } from "../../components/Loading"
 
-export const CheckinList = () => {
+export const CheckLogList = () => {
     const ref = useRef(null)
     const [searchTerm, setSearchTerm] = useState('')
     const debouncedValue = useDebounce(searchTerm)

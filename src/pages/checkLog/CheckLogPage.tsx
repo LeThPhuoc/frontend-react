@@ -3,66 +3,95 @@
 import { css } from "@emotion/react"
 import { TextField } from "../../components/input/TextField"
 import { useEffect, useState } from "react"
-import { DataProject } from "../../api/project/getListProjectApi"
 import { useParams } from "react-router-dom"
-import { getDetailProjectApi } from "../../api/project/getDetailProjectApi"
 import { useAlert } from "../../components/Alert/AlertProvider"
 import { useFormik } from "formik"
 import { Loading } from "../../components/Loading"
 import { Button } from "../../components/Button/button"
+import { DataProjectCheckLog, getProjectCheckLogDetail } from "../../api/checkLog/getProjectCheckLogDetailApi"
+import { checkinApi } from "../../api/checkLog/checkinApi"
+import { checkoutApi } from "../../api/checkLog/checkoutApi"
 
-export const CheckinPage = () => {
+export const CheckLogPage = () => {
     const { showAlert } = useAlert()
     const [isLoading, setIsLoading] = useState(false)
     const { id } = useParams()
+    const idUser = JSON.parse(localStorage.getItem('user') ?? '').id
+    const roleUser = localStorage.getItem('role')
 
-    const formik = useFormik<DataProject>({
+    const formik = useFormik<DataProjectCheckLog>({
         initialValues: {
-            id: undefined,
             name: '',
             description: '',
             address: '',
             start_date: '',
             end_date: '',
             staff: [],
-            boss: []
         },
         validateOnMount: false,
         validateOnChange: false,
         validateOnBlur: false,
         onSubmit: async values => {
-            
+
         }
     })
 
-    const handleGetDetailProject = async () => {
+    const fetchData = async () => {
+            setIsLoading(true)
+            await getProjectCheckLogDetail({
+                project_id: id ?? '',
+                success: (data) => {
+                    let listStaff = data.staff ?? []
+                        if(idUser && roleUser === 'staff' && data.staff){
+                            const firstStaff = data.staff.find((m) => m.id == idUser)
+                            listStaff = firstStaff ? [firstStaff, ...data.staff?.filter((m) => m.id != idUser)] : data.staff
+                        }
+                    formik.setValues({
+                        name: data.name,
+                        description: data.description,
+                        address: data.address,
+                        start_date: data.start_date ?? '',
+                        end_date: data.end_date ?? '',
+                        staff: listStaff,
+                    })
+                }
+            })
+            setIsLoading(false)
+        }
+
+    const handleCheckin = async (staff_id: number) => {
+        if (!id) return;
         setIsLoading(true)
-        await getDetailProjectApi({
-            project_id: id ?? '',
-            success: (data) => {
-                formik.setValues({
-                    id: Number(data.id),
-                    name: data.name,
-                    description: data.description,
-                    address: data.address,
-                    start_date: data.start_date ?? '',
-                    end_date: data.end_date ?? '',
-                    staff: (data.staff ?? []).map((m) => ({ ...m, project_id: Number(data.id), user: 'staff' })),
-                    boss: (data.boss ?? []).map((m) => ({ ...m, project_id: Number(data.id), user: 'boss' }))
-                })
-            }
-        })
+        await checkinApi({
+            project_id: id,
+            staff_id: staff_id.toString(),
+        }
+        )
         setIsLoading(false)
+        fetchData()
+    }
+
+    const handleCheckout = async (staff_id: number) => {
+        if (!id) return;
+        setIsLoading(true)
+        await checkoutApi({
+            project_id: id,
+            staff_id: staff_id.toString(),
+        }
+        )
+        setIsLoading(false)
+        fetchData()
     }
 
 
     useEffect(() => {
-        handleGetDetailProject()
+        
+        fetchData()
     }, [])
 
     return (
         <div css={container}>
-            {isLoading && <Loading/>}
+            {isLoading && <Loading />}
             <h1 css={css`
                 text-align: center;
                 font-size: 24px;
@@ -73,21 +102,21 @@ export const CheckinPage = () => {
                     label="Tên dự án :"
                     value={formik.values.name ?? ''}
                     isFullWidth
-                    
+
                 />
                 <TextField
                     disabled
                     label="Mô tả của dự án :"
                     value={formik.values.description ?? ''}
                     isFullWidth
-                    
+
                 />
                 <TextField
                     disabled
                     label="Địa chỉ :"
                     value={formik.values.address ?? ''}
                     isFullWidth
-                    
+
                 />
                 <TextField
                     disabled
@@ -95,7 +124,7 @@ export const CheckinPage = () => {
                     value={formik.values.start_date ?? ''}
                     isFullWidth
                     type="date"
-                    
+
                 />
                 <TextField
                     disabled
@@ -103,21 +132,22 @@ export const CheckinPage = () => {
                     value={formik.values.end_date ?? ''}
                     isFullWidth
                     type="date"
-                    
+
                 />
             </div>
             <div>
                 <h1 css={css`
                     font-size: 24px;
                     text-align: center;
-                `}>bảng Checkin</h1>
+                `}>bảng chấm công</h1>
                 <div css={tableCheckin}>
                     <table>
                         <thead>
                             <tr>
                                 <th>tên</th>
                                 <th>vai trò</th>
-                                <th>total</th>
+                                <th>tổng giờ làm</th>
+                                <th>thời gian làm hôm nay</th>
                                 <th>checkin time</th>
                                 <th>checkout time</th>
                             </tr>
@@ -126,11 +156,20 @@ export const CheckinPage = () => {
                             {formik.values.staff?.map((m) => {
                                 return (
                                     <tr key={m.id}>
-                                        <td>{m.name}</td>
+                                        <td>{m.name} {m.id == idUser && roleUser === 'staff' ? '( Bạn )' : null}</td>
                                         <td>{m.role}</td>
-                                        <td>{m.role}</td>
-                                        <td><Button isFullWidth>Checkin</Button></td>
-                                        <td><Button isFullWidth>Checkout</Button></td>
+                                        <td>{m.total_hours}giờ</td>
+                                        <td>{`${Math.floor(Number(m.total_hours_today) / 60)} giờ ${Number(m.total_hours_today) % 60} phút`}</td>
+                                        <td>{m.checkin_time && m.id == idUser && !m.checkout_time ? m.checkin_time : <Button
+                                            isFullWidth
+                                            onClick={() => handleCheckin(m.id)}
+                                            disabled={(!!m.checkin_time && !m.checkout_time) || (m.id !== idUser)}
+                                        >Checkin</Button>}</td>
+                                        <td><Button
+                                            isFullWidth
+                                            onClick={() => handleCheckout(m.id)}
+                                            disabled={(!m.checkin_time || !!m.checkout_time) || (m.id !== idUser)}
+                                        >Checkout</Button></td>
                                     </tr>
                                 )
                             })}
@@ -169,6 +208,7 @@ const tableCheckin = css`
     thead {
         position: sticky;
         top: 0px;
+        z-index: 1;
         tr {
             background-color: #6464b3;
             color: white;
@@ -176,5 +216,12 @@ const tableCheckin = css`
                 padding: 5px;
             }
         }
+    }
+    tbody {
+        tr {
+            td {
+
+                text-align: center; }
+            }
     }
 `
