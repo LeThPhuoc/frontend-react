@@ -32,6 +32,7 @@ export const ProjectDetail = () => {
     >({ isOpen: false, title: '', role: undefined })
     const [isLoading, setIsLoading] = useState(false)
     const { id } = useParams()
+    const roleUser = localStorage.getItem('role')
 
     const formik = useFormik<DataProject>({
         initialValues: {
@@ -139,6 +140,7 @@ export const ProjectDetail = () => {
             `}>Thông tin dự án</h1>
             <div css={projectInfo}>
                 <TextField
+                    disabled={roleUser !== 'boss'}
                     label="Tên dự án :"
                     value={formik.values.name ?? ''}
                     isFullWidth
@@ -147,6 +149,7 @@ export const ProjectDetail = () => {
                     }}
                 />
                 <TextField
+                    disabled={roleUser !== 'boss'}
                     label="Mô tả của dự án :"
                     value={formik.values.description ?? ''}
                     isFullWidth
@@ -155,6 +158,7 @@ export const ProjectDetail = () => {
                     }}
                 />
                 <TextField
+                    disabled={roleUser !== 'boss'}
                     label="Địa chỉ :"
                     value={formik.values.address ?? ''}
                     isFullWidth
@@ -163,6 +167,7 @@ export const ProjectDetail = () => {
                     }}
                 />
                 <TextField
+                    disabled={roleUser !== 'boss'}
                     label="Ngày bắt đầu :"
                     value={formik.values.start_date ?? ''}
                     isFullWidth
@@ -172,6 +177,7 @@ export const ProjectDetail = () => {
                     }}
                 />
                 <TextField
+                    disabled={roleUser !== 'boss'}
                     label="Ngày kết thúc :"
                     value={formik.values.end_date ?? ''}
                     isFullWidth
@@ -181,7 +187,7 @@ export const ProjectDetail = () => {
                     }}
                 />
                 <Button
-                    disabled={isDisableBtnResetValue}
+                    disabled={isDisableBtnResetValue || roleUser !== 'boss'}
                     isFullWidth
                     onClick={handleResetForm}
                     customCss={css`
@@ -191,7 +197,7 @@ export const ProjectDetail = () => {
                     Quay về trạng thái ban đầu
                 </Button>
                 <Button
-                    disabled={isDisableBtnResetValue}
+                    disabled={isDisableBtnResetValue || roleUser !== 'boss'}
                     isFullWidth
                     onClick={() => formik.submitForm()}
                 >

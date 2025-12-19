@@ -37,27 +37,27 @@ export const CheckLogPage = () => {
     })
 
     const fetchData = async () => {
-            setIsLoading(true)
-            await getProjectCheckLogDetail({
-                project_id: id ?? '',
-                success: (data) => {
-                    let listStaff = data.staff ?? []
-                        if(idUser && roleUser === 'staff' && data.staff){
-                            const firstStaff = data.staff.find((m) => m.id == idUser)
-                            listStaff = firstStaff ? [firstStaff, ...data.staff?.filter((m) => m.id != idUser)] : data.staff
-                        }
-                    formik.setValues({
-                        name: data.name,
-                        description: data.description,
-                        address: data.address,
-                        start_date: data.start_date ?? '',
-                        end_date: data.end_date ?? '',
-                        staff: listStaff,
-                    })
+        setIsLoading(true)
+        await getProjectCheckLogDetail({
+            project_id: id ?? '',
+            success: (data) => {
+                let listStaff = data.staff ?? []
+                if (idUser && roleUser === 'staff' && data.staff) {
+                    const firstStaff = data.staff.find((m) => m.id == idUser)
+                    listStaff = firstStaff ? [firstStaff, ...data.staff?.filter((m) => m.id != idUser)] : data.staff
                 }
-            })
-            setIsLoading(false)
-        }
+                formik.setValues({
+                    name: data.name,
+                    description: data.description,
+                    address: data.address,
+                    start_date: data.start_date ?? '',
+                    end_date: data.end_date ?? '',
+                    staff: listStaff,
+                })
+            }
+        })
+        setIsLoading(false)
+    }
 
     const handleCheckin = async (staff_id: number) => {
         if (!id) return;
@@ -85,7 +85,7 @@ export const CheckLogPage = () => {
 
 
     useEffect(() => {
-        
+
         fetchData()
     }, [])
 
@@ -160,16 +160,21 @@ export const CheckLogPage = () => {
                                         <td>{m.role}</td>
                                         <td>{m.total_hours}giờ</td>
                                         <td>{`${Math.floor(Number(m.total_hours_today) / 60)} giờ ${Number(m.total_hours_today) % 60} phút`}</td>
-                                        <td>{m.checkin_time && m.id == idUser && !m.checkout_time ? m.checkin_time : <Button
-                                            isFullWidth
-                                            onClick={() => handleCheckin(m.id)}
-                                            disabled={(!!m.checkin_time && !m.checkout_time) || (m.id !== idUser)}
-                                        >Checkin</Button>}</td>
-                                        <td><Button
-                                            isFullWidth
-                                            onClick={() => handleCheckout(m.id)}
-                                            disabled={(!m.checkin_time || !!m.checkout_time) || (m.id !== idUser)}
-                                        >Checkout</Button></td>
+                                        <td>
+                                            {m.checkin_time && !m.checkout_time
+                                                ? m.checkin_time : <Button
+                                                    isFullWidth
+                                                    onClick={() => handleCheckin(m.id)}
+                                                    disabled={(!!m.checkin_time && !m.checkout_time) || (m.id !== idUser)}
+                                                >Checkin</Button>}
+                                        </td>
+                                        <td>
+                                            <Button
+                                                isFullWidth
+                                                onClick={() => handleCheckout(m.id)}
+                                                disabled={(!m.checkin_time || !!m.checkout_time) || (m.id !== idUser)}
+                                            >Checkout</Button>
+                                        </td>
                                     </tr>
                                 )
                             })}
@@ -220,7 +225,7 @@ const tableCheckin = css`
     tbody {
         tr {
             td {
-
+                padding: 0px;
                 text-align: center; }
             }
     }
