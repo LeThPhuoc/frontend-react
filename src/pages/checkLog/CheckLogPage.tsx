@@ -161,19 +161,32 @@ export const CheckLogPage = () => {
                                         <td>{m.total_hours}giờ</td>
                                         <td>{`${Math.floor(Number(m.total_hours_today) / 60)} giờ ${Number(m.total_hours_today) % 60} phút`}</td>
                                         <td>
-                                            {m.checkin_time && !m.checkout_time
-                                                ? m.checkin_time : <Button
-                                                    isFullWidth
-                                                    onClick={() => handleCheckin(m.id)}
-                                                    disabled={(!!m.checkin_time && !m.checkout_time) || (m.id !== idUser)}
-                                                >Checkin</Button>}
+                                            <div css={css`
+                                                padding: 0 5px;
+                                            `}>
+                                                {idUser == m.id && (
+                                                    m.checkin_time && !m.checkout_time
+                                                        ? m.checkin_time : <Button
+                                                            isFullWidth
+                                                            onClick={() => handleCheckin(m.id)}
+                                                            disabled={(!!m.checkin_time && !m.checkout_time) || (m.id !== idUser)}
+                                                        >Checkin</Button>
+                                                )}
+                                            </div>
+
                                         </td>
                                         <td>
-                                            <Button
-                                                isFullWidth
-                                                onClick={() => handleCheckout(m.id)}
-                                                disabled={(!m.checkin_time || !!m.checkout_time) || (m.id !== idUser)}
-                                            >Checkout</Button>
+                                            <div css={css`
+                                                padding: 0 5px;
+                                            `}>
+                                                {idUser == m.id && (
+                                                    <Button
+                                                        isFullWidth
+                                                        onClick={() => handleCheckout(m.id)}
+                                                        disabled={(!m.checkin_time || !!m.checkout_time) || (m.id !== idUser)}
+                                                    >Checkout</Button>
+                                                )}
+                                            </div>
                                         </td>
                                     </tr>
                                 )
@@ -224,6 +237,7 @@ const tableCheckin = css`
     }
     tbody {
         tr {
+            height: 40px;
             td {
                 padding: 0px;
                 text-align: center; }
