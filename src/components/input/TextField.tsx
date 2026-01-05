@@ -1,13 +1,14 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react"
-import { ChangeEvent, useEffect, useState } from "react"
+import { ChangeEvent, useEffect, useState, FocusEvent } from "react"
 
 type Props = {
     placeholder?: string
     size?: 'md' | 'sm' | 'lg'
     value: string | number
     onChange?: (value: ChangeEvent<HTMLInputElement>) => void
+    onFocus?: (value: FocusEvent<HTMLInputElement, Element>) => void
     onClick?: (e: React.MouseEvent) => void,
     isFullWidth?: boolean
     type?: string
@@ -50,6 +51,7 @@ export const TextField = (
         value,
         onChange,
         onClick,
+        onFocus,
         isFullWidth,
         type = 'text',
         errorText,
@@ -83,6 +85,7 @@ export const TextField = (
                     type={type}
                     disabled={disabled}
                     onClick={(e) => onClick && onClick(e)}
+                    onFocus={(e) => onFocus && onFocus(e)}
                 />
             </div>
             {errorText && (
