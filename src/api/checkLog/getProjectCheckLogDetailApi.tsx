@@ -36,10 +36,12 @@ export type StaffCheckLog = {
     tel: string,
     address: string,
     login_name: string,
-    email: string
+    email: string,
     role: string,
     checkin_time?: string,
     checkout_time?: string,
-    total_hours?: string
+    total_hours?: string,
     total_hours_today?: string,
+    total_timekeeping_number?: string | number
+    total_timekeeping_number_today?: string | number
 }

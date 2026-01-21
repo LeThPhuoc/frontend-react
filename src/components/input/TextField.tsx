@@ -18,6 +18,7 @@ type Props = {
     emphasis?: boolean
     positionLabel?: 'top' | 'left'
     maxLength?: number
+    isFocus?:boolean
 }
 
 const sizeCss = (size: 'md' | 'sm' | 'lg') => {
@@ -58,7 +59,8 @@ export const TextField = (
         label,
         disabled,
         positionLabel = 'top',
-        maxLength
+        maxLength,
+        isFocus
     }: Props) => {
 
     const [text, setText] = useState(value)
@@ -86,6 +88,7 @@ export const TextField = (
                     disabled={disabled}
                     onClick={(e) => onClick && onClick(e)}
                     onFocus={(e) => onFocus && onFocus(e)}
+                    autoFocus={isFocus}
                 />
             </div>
             {errorText && (
@@ -105,7 +108,7 @@ const baseCss = (disabled?: boolean, emphasis?: boolean) => css`
     border-radius: 8px;
     min-width: 150px;
     color: #0E0E21;
-    border: 1px solid #EAE9EE;
+    border: 1px solid #d3d3d3;
     box-shadow: 0px 1px 2px 0px #1018280D;
     transition: all .3s ease-out;
     opacity: ${disabled ? 0.6 : 1};

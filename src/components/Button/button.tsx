@@ -10,11 +10,12 @@ type Props = {
     disabled?: boolean
     variant?: TypeButton
     customCss?: SerializedStyles | SerializedStyles[]
+    isFocus?: boolean
 }
 
 type TypeButton = 'primary' | 'secondary' | 'delete';
 
-const typeCss = (variant: TypeButton) => {
+const typeCss = (variant: TypeButton, isFocus?: boolean) => {
     switch (variant) {
         case 'primary': {
             return css`
@@ -22,6 +23,14 @@ const typeCss = (variant: TypeButton) => {
                 :not(:disabled):hover {
                     background-color: #7399FF;
                     color: white;
+                }
+                ${isFocus &&
+                css`
+                        background-color: #7399ff;
+                        color: white;
+                        outline: 1px solid #4c6fff;
+                        outline-offset: 1px;
+                    `
                 }
             `
         }
@@ -32,6 +41,13 @@ const typeCss = (variant: TypeButton) => {
                 :not(:disabled):hover {
                     border: 1px solid #0E0E21
                 }
+                ${isFocus &&
+                css`
+                        background-color: #d9d9d9;
+                        outline: 1px solid #EDE6DD;
+                        outline-offset: 1px;
+                    `
+                }
             `
         }
         case 'delete': {
@@ -40,6 +56,14 @@ const typeCss = (variant: TypeButton) => {
                 :not(:disabled):hover {
                     background-color: #FF6A6A;
                     color: white;
+                }
+                ${isFocus &&
+                css`
+                        background-color: #FF6A6A;
+                        color: white;
+                        outline: 1px solid #FF6A6A;
+                        outline-offset: 1px;
+                    `
                 }
             `}
     }
@@ -76,17 +100,18 @@ export const Button = (
         onClick,
         disabled,
         variant = 'primary',
-        customCss
+        customCss,
+        isFocus
     }: Props
 ) => {
     return (
         <button
             css={[
-                customCss,
                 baseCss(disabled,
-                    isFullWidth),
+                isFullWidth),
                 sizeCss(size),
-                typeCss(variant)
+                typeCss(variant, isFocus),
+                customCss,
             ]}
             onClick={onClick}
             disabled={disabled}

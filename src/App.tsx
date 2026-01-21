@@ -24,19 +24,26 @@ function App() {
           <NavBar />
         )}
         <div css={css`
-          margin: ${isAuthenticated ? '40px auto 0px auto' : '0px auto'};
-          max-width: 1200px;
+          background-color: #e9e9e9;
+          height: calc(100vh - 40px);
         `}>
-          <Routes>
-            <Route path="/login" element={<LoginOrRegister />} />
-            <Route element={<AuthThenticatedRoute isAuthenticated={(isAuthenticated || location.state)} />}>
-              <Route path="/staff" element={<Staff />} />
-              <Route path="/project" element={<Project />} />
-              <Route path="/project/:id/detail" element={<ProjectDetail />} />
-              <Route path="checkin_list" element={<CheckLogList />} />
-              <Route path="checkin_page/:id" element={<CheckLogPage />} />
-            </Route>
-          </Routes>
+          <div css={css`
+            margin: ${isAuthenticated ? '40px auto 0px auto' : '0px auto'};
+            max-width: 1200px;
+            background-color: white;
+            height: 100%;
+          `}>
+            <Routes>
+              <Route path="/login" element={<LoginOrRegister />} />
+              <Route element={<AuthThenticatedRoute isAuthenticated={(isAuthenticated || location.state)} />}>
+                <Route path="/staff" element={<Staff />} />
+                <Route path="/project" element={<Project />} />
+                <Route path="/project/:id/detail" element={<ProjectDetail />} />
+                <Route path="checkin_list" element={<CheckLogList />} />
+                <Route path="checkin_page/:id" element={<CheckLogPage />} />
+              </Route>
+            </Routes>
+          </div>
         </div>
       </AlertProvider>
     </>
