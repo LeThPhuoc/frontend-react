@@ -2,7 +2,7 @@
 
 import { css } from "@emotion/react"
 import { TextField } from "../../components/input/TextField"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useParams } from "react-router-dom"
 import { useAlert } from "../../components/Alert/AlertProvider"
 import { useFormik } from "formik"
@@ -15,8 +15,8 @@ import { onlyNumber } from "../../hooks/onlyNumber"
 import { DataProjectTimeSheet, getDetailProjectTimeSheetApi } from "../../api/timesheet/getDetailTimeSheetApi"
 
 type FormikType = {
-    project_detail: DataProjectCheckLog,
-    project_timesheet: DataProjectTimeSheet,
+    project_detail: DataProjectCheckLog | null,
+    project_timesheet: DataProjectTimeSheet | null,
 }
 
 export const CheckLogPage = () => {
@@ -27,16 +27,13 @@ export const CheckLogPage = () => {
     const roleUser = localStorage.getItem('role')
     const [changeTimeSheet, setChangeTimeSheet] = useState<Record<number, string | number>>({});
     const [isEditTimeSheet, setIsEditTimeSheet] = useState<Record<number, boolean>>({});
+    const [searchStaff, setSearchStaff] = useState<string>('');
 
 
-    const formik = useFormik<DataProjectCheckLog>({
+    const formik = useFormik<FormikType>({
         initialValues: {
-            name: '',
-            description: '',
-            address: '',
-            start_date: '',
-            end_date: '',
-            staff: [],
+            project_detail: null,
+            project_timesheet: null
         },
         validateOnMount: false,
         validateOnChange: false,
@@ -57,28 +54,14 @@ export const CheckLogPage = () => {
                         const firstStaff = data.staff.find((m) => m.id == idUser)
                         listStaff = firstStaff ? [firstStaff, ...data.staff?.filter((m) => m.id != idUser)] : data.staff
                     }
-                    formik.setValues({
-                        name: data.name,
-                        description: data.description,
-                        address: data.address,
-                        start_date: data.start_date ?? '',
-                        end_date: data.end_date ?? '',
-                        staff: listStaff,
-                    })
+                    formik.setFieldValue('project_detail', data)
                 }
             })
         } else {
             await getDetailProjectTimeSheetApi({
                 project_id: id ?? '',
                 success: (data) => {
-                    formik.setValues({
-                        name: data.name,
-                        description: data.description,
-                        address: data.address,
-                        start_date: data.start_date ?? '',
-                        end_date: data.end_date ?? '',
-                        staff: data.staff ?? [],
-                    })
+                    formik.setFieldValue('project_timesheet', data)
                 }
             })
         }
@@ -113,6 +96,13 @@ export const CheckLogPage = () => {
         fetchData()
     }, [])
 
+    const handleSearchTimeSheetStaff = useMemo(() => {
+        if (searchStaff !== '') {
+            return [...formik.values.project_timesheet?.staff ?? []].filter((staff) => staff.name.toLowerCase().includes(searchStaff.toLowerCase()))
+        }
+        return formik.values.project_timesheet?.staff
+    }, [searchStaff, formik.values.project_timesheet])
+
     return (
         <div css={container}>
             {isLoading && <Loading />}
@@ -127,32 +117,62 @@ export const CheckLogPage = () => {
                     <TextField
                         disabled
                         label="Tên dự án :"
-                        value={formik.values.name ?? ''}
+                        value={
+                            (
+                                formik.values.project_detail?.name ||
+                                formik.values.project_timesheet?.name
+
+                            ) ?? ''
+                        }
                         isFullWidth
                     />
                     <TextField
                         disabled
                         label="Mô tả của dự án :"
-                        value={formik.values.description ?? ''}
+                        value={
+                            (
+                                formik.values.project_detail?.description ||
+                                formik.values.project_timesheet?.description
+
+                            ) ?? ''
+                        }
                         isFullWidth
                     />
                     <TextField
                         disabled
                         label="Địa chỉ :"
-                        value={formik.values.address ?? ''}
+                        value={
+                            (
+                                formik.values.project_detail?.address ||
+                                formik.values.project_timesheet?.address
+
+                            ) ?? ''
+                        }
                         isFullWidth
                     />
                     <TextField
                         disabled
                         label="Ngày bắt đầu :"
-                        value={formik.values.start_date ?? ''}
+                        value={
+                            (
+                                formik.values.project_detail?.start_date ||
+                                formik.values.project_timesheet?.start_date
+
+                            ) ?? ''
+                        }
                         isFullWidth
                         type="date"
                     />
                     <TextField
                         disabled
                         label="Ngày kết thúc :"
-                        value={formik.values.end_date ?? ''}
+                        value={
+                            (
+                                formik.values.project_detail?.end_date ||
+                                formik.values.project_timesheet?.end_date
+
+                            ) ?? ''
+                        }
                         isFullWidth
                         type="date"
                     />
@@ -166,10 +186,29 @@ export const CheckLogPage = () => {
             <div css={css`
                 width: calc((100% - 20px) - 30%);
             `}>
-                <h1 css={css`
-                    font-size: 24px;
-                    text-align: center;
-                `}>bảng chấm công</h1>
+                <div
+                    css={css`
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        margin-bottom: 10px;
+                    `}
+                >
+                    <TextField
+                        value={searchStaff}
+                        label="Tìm kiếm nhân viên"
+                        onChange={(e) => {
+                            const value = e.target.value.toLowerCase();
+                            setSearchStaff(value);
+                        }}
+                    />
+                    <h1 css={css`
+                        font-size: 24px;
+                    `}
+                    >
+                        bảng chấm công
+                    </h1>
+                </div>
                 <div css={tableCheckin}>
                     <table>
                         {roleUser == 'staff' ? (
@@ -185,7 +224,7 @@ export const CheckLogPage = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {formik.values.staff?.map((m) => {
+                                    {formik.values.project_detail?.staff?.map((m) => {
                                         return (
                                             <tr key={m.id}>
                                                 <td>{m.name} {m.id == idUser && roleUser === 'staff' ? '( Bạn )' : null}</td>
@@ -237,7 +276,7 @@ export const CheckLogPage = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {formik.values.staff?.map((m) => {
+                                    {handleSearchTimeSheetStaff?.map((m) => {
                                         return (
                                             <tr key={m.id}>
                                                 <td>{m.name} {m.id == idUser && roleUser === 'staff' ? '( Bạn )' : null}</td>
@@ -369,6 +408,10 @@ const tableCheckin = css`
             td {
                 padding: 4px 2px;
                 text-align: center; 
+                border-right: 1px solid #ddd;
+                &:last-of-type {
+                    border-right: none;
+                }
             }
         }
         tr:nth-of-type(even) {

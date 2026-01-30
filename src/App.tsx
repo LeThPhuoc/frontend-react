@@ -24,7 +24,7 @@ function App() {
           <NavBar />
         )}
         <div css={css`
-          background-color: #e9e9e9;
+          background-color: ${isAuthenticated ? '#e9e9e9' : '#ffffff'};
           height: calc(100vh - 40px);
         `}>
           <div css={css`
