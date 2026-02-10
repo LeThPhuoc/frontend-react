@@ -10,6 +10,7 @@ type Props = {
     onChange?: (value: ChangeEvent<HTMLInputElement>) => void
     onFocus?: (value: FocusEvent<HTMLInputElement, Element>) => void
     onClick?: (e: React.MouseEvent) => void,
+    onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void,
     isFullWidth?: boolean
     type?: string
     errorText?: string
@@ -18,7 +19,7 @@ type Props = {
     emphasis?: boolean
     positionLabel?: 'top' | 'left'
     maxLength?: number
-    isFocus?:boolean
+    isFocus?: boolean
 }
 
 const sizeCss = (size: 'md' | 'sm' | 'lg') => {
@@ -53,6 +54,7 @@ export const TextField = (
         onChange,
         onClick,
         onFocus,
+        onKeyDown,
         isFullWidth,
         type = 'text',
         errorText,
@@ -88,6 +90,7 @@ export const TextField = (
                     disabled={disabled}
                     onClick={(e) => onClick && onClick(e)}
                     onFocus={(e) => onFocus && onFocus(e)}
+                    onKeyDown={(e) => onKeyDown && onKeyDown(e)}
                     autoFocus={isFocus}
                 />
             </div>

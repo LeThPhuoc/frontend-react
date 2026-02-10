@@ -29,7 +29,7 @@ function App() {
         `}>
           <div css={css`
             margin: ${isAuthenticated ? '40px auto 0px auto' : '0px auto'};
-            max-width: 1200px;
+            max-width: ${!isAuthenticated ? '100%' : '1200px'};
             background-color: white;
             height: 100%;
           `}>
