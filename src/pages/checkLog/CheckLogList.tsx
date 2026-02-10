@@ -357,6 +357,7 @@ const emptyState = css`
 `
 
 const projectCard = (isHovered: boolean) => css`
+    height: fit-content;
     position: relative;
     display: flex;
     flex-direction: column;
